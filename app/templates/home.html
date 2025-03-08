@@ -1,23 +1,27 @@
 {% extends "base.html" %}
-
 {% block title %}BWF Routine - Home{% endblock %}
-
 {% block content %}
 <div class="routine-container">
+    {% if current_user.is_authenticated and session.get('current_workout_id') %}
+        <div class="active-workout-banner">
+            <p>Workout in progress! Don't forget to log your exercises.</p>
+        </div>
+    {% endif %}
+
     {% for section, exercises in routine.items() %}
         <section class="routine-section">
             <h2>{{ section }}</h2>
             <ul class="exercise-list">
                 {% for exercise in exercises %}
-                    <li>
-                        <a href="{{ url_for('main.exercise', section=section, index=loop.index0) }}" class="exercise-card">
-                            <h3>{{ exercise.name }}</h3>
-                            <div class="exercise-meta">
-                                <span>{{ exercise.sets }} sets</span>
-                                <span>{{ exercise.reps }} reps</span>
-                            </div>
-                        </a>
-                    </li>
+                <li>
+                    <a href="{{ url_for('main.exercise', section=section, index=loop.index0) }}" class="exercise-card">
+                        <h3>{{ exercise.name }}</h3>
+                        <div class="exercise-meta">
+                            <span>{{ exercise.sets }} sets</span>
+                            <span>{{ exercise.reps }} reps</span>
+                        </div>
+                    </a>
+                </li>
                 {% endfor %}
             </ul>
         </section>

@@ -1,11 +1,8 @@
 {% extends "base.html" %}
-
 {% block title %}{{ exercise.name }}{% endblock %}
-
 {% block content %}
 <div class="exercise-detail">
-    <a href="{{ url_for('main.home') }}" class="back-button">← Back to Routine</a>
-
+    <a href="{{ url_for('main.home') }}" class="back-button">&larr; Back to Routine</a>
     <h2>{{ exercise.name }}</h2>
 
     <div class="exercise-info">
@@ -13,11 +10,16 @@
             <h3>Sets</h3>
             <p>{{ exercise.sets }}</p>
         </div>
-
         <div class="info-card">
             <h3>Reps</h3>
             <p>{{ exercise.reps }}</p>
         </div>
+        {% if rest_period %}
+        <div class="info-card">
+            <h3>Rest</h3>
+            <p>{{ rest_period }}s</p>
+        </div>
+        {% endif %}
     </div>
 
     <div class="exercise-description">
@@ -25,13 +27,70 @@
         <p>{{ exercise.description }}</p>
     </div>
 
+    {% if progression_data and user_progression %}
+    <div class="progression-section">
+        <h3>Your Current Progression</h3>
+        {% set current_level = user_progression.current_progression %}
+        {% set current_exercise = progression_data|selectattr('level', 'eq', current_level)|first %}
+
+        <div class="current-progression">
+            <h4>{{ current_exercise.name }} (Level {{ current_level }})</h4>
+            <p>{{ current_exercise.description }}</p>
+            <p class="progression-goal">Goal: 3 sets of 8 reps with good form</p>
+            <p class="progression-current">Current: 3 sets of {{ user_progression.current_reps }} reps</p>
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="log-exercise-form">
+            <h3>Log Your Progress</h3>
+            <form method="POST" action="{{ url_for('main.log_exercise', exercise_name=exercise.name) }}">
+                <input type="hidden" name="section" value="{{ section }}">
+                <input type="hidden" name="index" value="{{ request.view_args.index }}">
+                <input type="hidden" name="progression_level" value="{{ current_level }}">
+
+                <div class="form-group">
+                    <label for="sets_completed">Sets Completed</label>
+                    <select id="sets_completed" name="sets_completed" onchange="updateRepInputs(this.value)">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                    </select>
+                </div>
+
+                <div id="rep-inputs">
+                    <div class="form-group">
+                        <label for="reps_set_1">Reps (Set 1)</label>
+                        <input type="number" id="reps_set_1" name="reps_set_1" min="1" max="20" value="{{ user_progression.current_reps }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="reps_set_2">Reps (Set 2)</label>
+                        <input type="number" id="reps_set_2" name="reps_set_2" min="1" max="20" value="{{ user_progression.current_reps }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="reps_set_3">Reps (Set 3)</label>
+                        <input type="number" id="reps_set_3" name="reps_set_3" min="1" max="20" value="{{ user_progression.current_reps }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" name="notes" rows="3"></textarea>
+                </div>
+
+                <button type="submit" class="btn primary">Log Exercise</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
     <div class="timer-section">
         <h3>Rest Timer</h3>
         <div class="timer-display">00:00</div>
         <div class="timer-controls">
+            <button id="timer-60" class="timer-btn">60s</button>
             <button id="timer-90" class="timer-btn">90s</button>
             <button id="timer-120" class="timer-btn">2min</button>
-            <button id="timer-180" class="timer-btn">3min</button>
             <button id="timer-start" class="timer-btn primary">Start</button>
             <button id="timer-reset" class="timer-btn">Reset</button>
         </div>
@@ -41,17 +100,17 @@
 
 {% block extra_js %}
 <script>
-    // Timer functionality will be added here
+    // Timer functionality
     document.addEventListener('DOMContentLoaded', function() {
         const timerDisplay = document.querySelector('.timer-display');
         const startBtn = document.getElementById('timer-start');
         const resetBtn = document.getElementById('timer-reset');
+        const timer60Btn = document.getElementById('timer-60');
         const timer90Btn = document.getElementById('timer-90');
         const timer120Btn = document.getElementById('timer-120');
-        const timer180Btn = document.getElementById('timer-180');
 
         let countdown;
-        let timeLeft = 90;
+        let timeLeft = {{ rest_period or 90 }};
         let isRunning = false;
 
         function updateTimerDisplay() {
@@ -62,20 +121,16 @@
 
         function startTimer() {
             if (isRunning) return;
-
             isRunning = true;
             startBtn.textContent = 'Pause';
-
             countdown = setInterval(() => {
                 timeLeft--;
                 updateTimerDisplay();
-
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
                     timerDisplay.textContent = 'DONE!';
                     startBtn.textContent = 'Start';
                     isRunning = false;
-
                     // Play sound or vibrate
                     if ('vibrate' in navigator) {
                         navigator.vibrate([200, 100, 200]);
@@ -94,7 +149,7 @@
             clearInterval(countdown);
             isRunning = false;
             startBtn.textContent = 'Start';
-            timeLeft = 90;
+            timeLeft = {{ rest_period or 90 }};
             updateTimerDisplay();
         }
 
@@ -108,6 +163,11 @@
 
         resetBtn.addEventListener('click', resetTimer);
 
+        timer60Btn.addEventListener('click', function() {
+            timeLeft = 60;
+            updateTimerDisplay();
+        });
+
         timer90Btn.addEventListener('click', function() {
             timeLeft = 90;
             updateTimerDisplay();
@@ -118,13 +178,35 @@
             updateTimerDisplay();
         });
 
-        timer180Btn.addEventListener('click', function() {
-            timeLeft = 180;
-            updateTimerDisplay();
-        });
-
         // Initialize timer display
         updateTimerDisplay();
     });
+
+    // Function to update rep inputs based on sets selected
+    function updateRepInputs(sets) {
+        const repInputs = document.getElementById('rep-inputs');
+        repInputs.innerHTML = '';
+
+        for (let i = 1; i <= sets; i++) {
+            const div = document.createElement('div');
+            div.className = 'form-group';
+
+            const label = document.createElement('label');
+            label.setAttribute('for', `reps_set_${i}`);
+            label.textContent = `Reps (Set ${i})`;
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.id = `reps_set_${i}`;
+            input.name = `reps_set_${i}`;
+            input.min = '1';
+            input.max = '20';
+            input.value = '{{ user_progression.current_reps if user_progression else 5 }}';
+
+            div.appendChild(label);
+            div.appendChild(input);
+            repInputs.appendChild(div);
+        }
+    }
 </script>
 {% endblock %}

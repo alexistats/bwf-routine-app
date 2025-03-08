@@ -112,3 +112,215 @@ footer {
     color: #4a76a8;
     text-decoration: none;
 }
+
+/* Add to style.css */
+
+/* Auth Styles */
+.auth-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.auth-container h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #4a76a8;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn.primary {
+    background-color: #4a76a8;
+    color: white;
+}
+
+.btn.secondary {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.auth-link {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* Progress Tracking Styles */
+.progression-section {
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 5px;
+    margin: 1.5rem 0;
+}
+
+.current-progression {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.progression-goal {
+    color: #4a76a8;
+    font-weight: bold;
+    margin-top: 0.5rem;
+}
+
+.progression-current {
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+.log-exercise-form {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 5px;
+    margin-top: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Progress Page Styles */
+.progress-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.progression-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.progression-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progression-card h4 {
+    color: #4a76a8;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.workout-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.workout-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.workout-card h4 {
+    margin-bottom: 0.5rem;
+    color: #4a76a8;
+}
+
+/* Workout Detail Styles */
+.workout-detail-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.exercise-logs {
+    margin-top: 1.5rem;
+}
+
+.exercise-log-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+
+.exercise-log-card h3 {
+    color: #4a76a8;
+    margin-bottom: 0.5rem;
+}
+
+.progression-name {
+    font-style: italic;
+    color: #666;
+    margin-bottom: 0.75rem;
+}
+
+.sets-reps {
+    background-color: #f9f9f9;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin: 0.75rem 0;
+}
+
+.notes {
+    margin-top: 0.75rem;
+}
+
+.notes h4 {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+/* Active Workout Indicator */
+.workout-active {
+    background-color: #ff6b6b;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.active-workout-banner {
+    background-color: #4a76a8;
+    color: white;
+    padding: 0.75rem;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+}
