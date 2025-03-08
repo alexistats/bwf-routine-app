@@ -1,0 +1,102 @@
+{
+  "Warm-up": [
+    {
+      "name": "Yuri's Shoulder Band Warmup",
+      "sets": "1",
+      "reps": "5-10 each movement",
+      "description": "Use a resistance band to warm up your shoulders with various movements."
+    },
+    {
+      "name": "Squat Sky Reaches",
+      "sets": "1",
+      "reps": "5-10",
+      "description": "Perform a deep squat while reaching your arms overhead."
+    },
+    {
+      "name": "GMB Wrist Prep",
+      "sets": "1",
+      "reps": "5-10 each movement",
+      "description": "Perform various wrist mobility exercises to prepare for bodyweight training."
+    },
+    {
+      "name": "Dead Bugs",
+      "sets": "1",
+      "reps": "10-30s",
+      "description": "Lie on your back and alternate extending opposite arm and leg while maintaining core tension."
+    },
+    {
+      "name": "Arch Hangs",
+      "sets": "1",
+      "reps": "10-30s",
+      "description": "Hang from a bar and pull your shoulder blades down and back."
+    },
+    {
+      "name": "Support Hold",
+      "sets": "1",
+      "reps": "10-30s",
+      "description": "Hold yourself up on parallel bars or the edge of counters/chairs."
+    }
+  ],
+  "Strength Work - First Pair": [
+    {
+      "name": "Pull-up Progression",
+      "sets": "3",
+      "reps": "5-8",
+      "description": "Choose from scapular pulls, arch hangs, negative pull-ups, pull-ups, weighted pull-ups."
+    },
+    {
+      "name": "Squat Progression",
+      "sets": "3",
+      "reps": "5-8",
+      "description": "Choose from assisted squat, squat, split squat, shrimp squat, weighted squat."
+    }
+  ],
+  "Strength Work - Second Pair": [
+    {
+      "name": "Dip Progression",
+      "sets": "3",
+      "reps": "5-8",
+      "description": "Choose from parallel bar support hold, negative dips, parallel bar dips, weighted dips."
+    },
+    {
+      "name": "Hinge Progression",
+      "sets": "3",
+      "reps": "5-8",
+      "description": "Choose from Romanian deadlift, single-legged deadlift, banded Nordic curl, Nordic curl."
+    }
+  ],
+  "Strength Work - Third Pair": [
+    {
+      "name": "Row Progression",
+      "sets": "3",
+      "reps": "5-8",
+      "description": "Choose from vertical rows, incline rows, horizontal rows, weighted rows."
+    },
+    {
+      "name": "Push-up Progression",
+      "sets": "3",
+      "reps": "5-8",
+      "description": "Choose from vertical push-up, incline push-up, full push-up, diamond push-up, pseudo planche push-up."
+    }
+  ],
+  "Core Triplet": [
+    {
+      "name": "Anti-Extension",
+      "sets": "3",
+      "reps": "8-12",
+      "description": "Choose from plank, ring ab rollout."
+    },
+    {
+      "name": "Anti-Rotation",
+      "sets": "3",
+      "reps": "8-12",
+      "description": "Choose from banded pallof press or similar exercises."
+    },
+    {
+      "name": "Extension",
+      "sets": "3",
+      "reps": "8-12",
+      "description": "Choose from reverse hyperextension, arch raises, superman."
+    }
+  ]
+}

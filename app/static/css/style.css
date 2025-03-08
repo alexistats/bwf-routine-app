@@ -1,0 +1,114 @@
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 100%;
+    padding: 0 15px;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #4a76a8;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem;
+}
+
+main {
+    padding: 1rem 0;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #f1f1f1;
+    margin-top: 2rem;
+}
+
+/* Routine List Styles */
+.routine-section {
+    margin-bottom: 2rem;
+}
+
+.routine-section h2 {
+    background-color: #4a76a8;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 5px 5px 0 0;
+    font-size: 1.2rem;
+}
+
+.exercise-list {
+    list-style: none;
+}
+
+.exercise-card {
+    display: block;
+    background-color: white;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.exercise-card:active {
+    transform: scale(0.98);
+}
+
+.exercise-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.exercise-meta {
+    display: flex;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.exercise-meta span {
+    margin-right: 1rem;
+}
+
+/* Exercise Detail Styles */
+.exercise-detail {
+    background-color: white;
+    border-radius: 5px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.back-button {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #4a76a8;
+    text-decoration: none;
+}
