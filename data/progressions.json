@@ -1,0 +1,185 @@
+{
+  "Pull-up Progression": [
+    {
+      "level": 1,
+      "name": "Scapular Pulls",
+      "description": "Hang from a bar and focus on pulling your shoulder blades down and together."
+    },
+    {
+      "level": 2,
+      "name": "Arch Hangs",
+      "description": "Hang from a bar and pull your chest up by engaging your back muscles."
+    },
+    {
+      "level": 3,
+      "name": "Negative Pull-ups",
+      "description": "Jump to the top position of a pull-up and slowly lower yourself down."
+    },
+    {
+      "level": 4,
+      "name": "Pull-ups",
+      "description": "Standard pull-ups with full range of motion."
+    },
+    {
+      "level": 5,
+      "name": "Weighted Pull-ups",
+      "description": "Pull-ups with additional weight attached."
+    }
+  ],
+  "Squat Progression": [
+    {
+      "level": 1,
+      "name": "Assisted Squat",
+      "description": "Perform a squat while holding onto a support for balance."
+    },
+    {
+      "level": 2,
+      "name": "Squat",
+      "description": "Standard bodyweight squat with arms extended forward."
+    },
+    {
+      "level": 3,
+      "name": "Split Squat",
+      "description": "Perform a squat with one leg forward and one back."
+    },
+    {
+      "level": 4,
+      "name": "Shrimp Squat",
+      "description": "Single-leg squat with the non-working leg held behind you."
+    },
+    {
+      "level": 5,
+      "name": "Weighted Squat",
+      "description": "Squat with additional weight."
+    }
+  ],
+  "Dip Progression": [
+    {
+      "level": 1,
+      "name": "Parallel Bar Support Hold",
+      "description": "Hold yourself up on parallel bars with arms straight."
+    },
+    {
+      "level": 2,
+      "name": "Negative Dips",
+      "description": "Start at the top position of a dip and slowly lower yourself down."
+    },
+    {
+      "level": 3,
+      "name": "Parallel Bar Dips",
+      "description": "Full dips on parallel bars."
+    },
+    {
+      "level": 4,
+      "name": "Weighted Dips",
+      "description": "Dips with additional weight attached."
+    }
+  ],
+  "Hinge Progression": [
+    {
+      "level": 1,
+      "name": "Romanian Deadlift",
+      "description": "Hinge at the hips while keeping legs mostly straight."
+    },
+    {
+      "level": 2,
+      "name": "Single-Legged Deadlift",
+      "description": "Romanian deadlift performed on one leg."
+    },
+    {
+      "level": 3,
+      "name": "Banded Nordic Curl",
+      "description": "Nordic curl with band assistance."
+    },
+    {
+      "level": 4,
+      "name": "Nordic Curl",
+      "description": "Lower yourself from a kneeling position using only your hamstrings."
+    }
+  ],
+  "Row Progression": [
+    {
+      "level": 1,
+      "name": "Vertical Rows",
+      "description": "Rows performed with body nearly vertical (easier angle)."
+    },
+    {
+      "level": 2,
+      "name": "Incline Rows",
+      "description": "Rows performed with body at an incline."
+    },
+    {
+      "level": 3,
+      "name": "Horizontal Rows",
+      "description": "Rows performed with body horizontal to the ground."
+    },
+    {
+      "level": 4,
+      "name": "Weighted Rows",
+      "description": "Horizontal rows with additional weight."
+    }
+  ],
+  "Push-up Progression": [
+    {
+      "level": 1,
+      "name": "Vertical Push-up",
+      "description": "Push-up performed against a wall (nearly vertical position)."
+    },
+    {
+      "level": 2,
+      "name": "Incline Push-up",
+      "description": "Push-up performed with hands on an elevated surface."
+    },
+    {
+      "level": 3,
+      "name": "Full Push-up",
+      "description": "Standard push-up on the floor."
+    },
+    {
+      "level": 4,
+      "name": "Diamond Push-up",
+      "description": "Push-up with hands close together forming a diamond shape."
+    },
+    {
+      "level": 5,
+      "name": "Pseudo Planche Push-up",
+      "description": "Push-up with hands positioned further down by your hips."
+    }
+  ],
+  "Anti-Extension": [
+    {
+      "level": 1,
+      "name": "Plank",
+      "description": "Standard plank position, maintaining a straight body."
+    },
+    {
+      "level": 2,
+      "name": "Ring Ab Rollout",
+      "description": "Using rings to roll out, challenging your core stability."
+    }
+  ],
+  "Anti-Rotation": [
+    {
+      "level": 1,
+      "name": "Banded Pallof Press",
+      "description": "Press a resistance band away from your body while resisting rotation."
+    }
+  ],
+  "Extension": [
+    {
+      "level": 1,
+      "name": "Reverse Hyperextension",
+      "description": "Lie face down and lift your legs behind you."
+    },
+    {
+      "level": 2,
+      "name": "Arch Raises",
+      "description": "Lie face down and lift both arms and legs simultaneously."
+    },
+    {
+      "level": 3,
+      "name": "Superman",
+      "description": "Advanced version of arch raises with longer hold times."
+    }
+  ]
+}

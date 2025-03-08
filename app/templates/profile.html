@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <h2>{{ user.username }}'s Profile</h2>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="profile-actions">
+        <a href="{{ url_for('main.log_workout') }}" class="btn primary">Log New Workout</a>
+    </div>
+
+    <section class="profile-section">
+        <h3>Current Progressions</h3>
+        {% if progressions %}
+            <div class="progression-cards">
+                {% for progression in progressions %}
+                    <div class="progression-card">
+                        <h4>{{ progression.exercise_category }}</h4>
+                        <p><strong>Current Level:</strong> {{ progression.current_progression }}</p>
+                        <p><strong>Target:</strong> {{ progression.current_sets }} sets of {{ progression.current_reps }} reps</p>
+                        <p><strong>Last Updated:</strong> {{ progression.last_updated.strftime('%Y-%m-%d') }}</p>
+
+                        <form action="{{ url_for('main.update_progression') }}" method="POST" class="progression-form">
+                            <input type="hidden" name="category" value="{{ progression.exercise_category }}">
+
+                            <div class="form-group">
+                                <label for="progression_{{ loop.index }}">Progression:</label>
+                                <select id="progression_{{ loop.index }}" name="progression">
+                                    {% for option in progression_data.get(progression.exercise_category, []) %}
+                                        <option value="{{ option }}" {% if option == progression.current_progression %}selected{% endif %}>
+                                            {{ option }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="reps_{{ loop.index }}">Target Reps:</label>
+                                <select id="reps_{{ loop.index }}" name="reps">
+                                    {% for i in range(5, 9) %}
+                                        <option value="{{ i }}" {% if i == progression.current_reps %}selected{% endif %}>
+                                            {{ i }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn small">Update</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-state">No progressions tracked yet. Complete a workout to start tracking!</p>
+        {% endif %}
+    </section>
+
+    <section class="profile-section">
+        <h3>Recent Workouts</h3>
+        {% if recent_workouts %}
+            <div class="workout-list">
+                {% for workout in recent_workouts %}
+                    <div class="workout-card">
+                        <div class="workout-header">
+                            <h4>Workout on {{ workout.date.strftime('%Y-%m-%d %H:%M') }}</h4>
+                        </div>
+
+                        <div class="workout-exercises">
+                            {% for log in workout.exercises %}
+                                <div class="workout-exercise">
+                                    <p><strong>{{ log.exercise_name }}</strong> ({{ log.progression_level }})</p>
+                                    <p>{{ log.sets_completed }} sets: {{ log.reps_completed }}</p>
+                                    {% if log.notes %}
+                                        <p class="exercise-notes">{{ log.notes }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {% if workout.notes %}
+                            <div class="workout-notes">
+                                <p><strong>Notes:</strong> {{ workout.notes }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-state">No workouts logged yet. Start tracking your progress!</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

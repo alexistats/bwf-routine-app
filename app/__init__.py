@@ -21,6 +21,10 @@ def create_app(config_class=Config):
     with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'routine_data.json'), 'r') as f:
         app.config['ROUTINE_DATA'] = json.load(f)
 
+    # Load progression data
+    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'progressions.json'), 'r') as f:
+        app.config['PROGRESSION_DATA'] = json.load(f)
+
     from app.routes import main
     app.register_blueprint(main)
 
