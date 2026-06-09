@@ -17,13 +17,16 @@ def create_app(config_class=Config):
     db.init_app(app)
     login_manager.init_app(app)
 
-    # Load routine data
-    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'routine_data.json'), 'r') as f:
+    data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
+
+    with open(os.path.join(data_dir, 'routine_data.json'), 'r') as f:
         app.config['ROUTINE_DATA'] = json.load(f)
 
-    # Load progression data
-    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'progressions.json'), 'r') as f:
+    with open(os.path.join(data_dir, 'progressions.json'), 'r') as f:
         app.config['PROGRESSION_DATA'] = json.load(f)
+
+    with open(os.path.join(data_dir, 'gym_routine.json'), 'r') as f:
+        app.config['GYM_ROUTINE_DATA'] = json.load(f)
 
     from app.routes import main
     app.register_blueprint(main)

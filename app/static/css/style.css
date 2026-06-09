@@ -324,3 +324,308 @@ footer {
     border-radius: 5px;
     margin-bottom: 1.5rem;
 }
+
+/* Routine Tabs */
+.routine-tabs {
+    display: flex;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #4a76a8;
+    gap: 0;
+}
+
+.routine-tab {
+    padding: 0.6rem 1.25rem;
+    text-decoration: none;
+    color: #4a76a8;
+    font-weight: bold;
+    border-radius: 5px 5px 0 0;
+    border: 2px solid transparent;
+    border-bottom: none;
+    margin-bottom: -2px;
+}
+
+.routine-tab.active {
+    background-color: #4a76a8;
+    color: white;
+    border-color: #4a76a8;
+}
+
+/* Start Workout CTA */
+.start-workout-cta {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* Weighted badge on exercise cards */
+.weighted-badge {
+    background-color: #e8f0f8;
+    color: #4a76a8;
+    font-size: 0.75rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* Exercise info cards */
+.exercise-info {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.info-card {
+    background-color: #f0f4f8;
+    border-radius: 5px;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    min-width: 70px;
+}
+
+.info-card h3 {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.info-card p {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #4a76a8;
+}
+
+.exercise-description {
+    margin: 1rem 0 1.5rem;
+    color: #555;
+}
+
+.exercise-description h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin-bottom: 0.4rem;
+}
+
+/* Last session summary */
+.last-session-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem;
+    background-color: #f0f4f8;
+    border-radius: 5px;
+}
+
+.last-session-label {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.last-set-badge {
+    font-size: 0.85rem;
+    color: #4a76a8;
+    background-color: white;
+    border: 1px solid #c8d8e8;
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+    white-space: nowrap;
+}
+
+/* Unit toggle */
+.unit-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.unit-toggle-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: bold;
+}
+
+.unit-toggle-btn {
+    background: none;
+    border: 2px solid #c8d8e8;
+    color: #666;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: all 0.15s;
+}
+
+.unit-toggle-btn.active {
+    background-color: #4a76a8;
+    border-color: #4a76a8;
+    color: white;
+}
+
+/* Gym set rows */
+.set-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.set-label {
+    min-width: 44px;
+    font-weight: bold;
+    color: #4a76a8;
+    font-size: 0.9rem;
+    padding-bottom: 0.35rem;
+}
+
+.set-inputs {
+    display: flex;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.set-inputs .form-group {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.set-inputs .form-group label {
+    font-size: 0.75rem;
+    color: #888;
+    font-weight: normal;
+    margin-bottom: 0.3rem;
+}
+
+.set-inputs .form-group input {
+    padding: 0.5rem 0.6rem;
+    font-size: 1rem;
+}
+
+/* Timer section */
+.timer-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.timer-section h3 {
+    margin-bottom: 0.75rem;
+    color: #4a76a8;
+}
+
+.timer-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+    color: #333;
+    margin-bottom: 0.75rem;
+}
+
+.timer-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.timer-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.timer-btn.primary {
+    background-color: #4a76a8;
+    color: white;
+    border-color: #4a76a8;
+}
+
+/* No-workout / login prompts */
+.no-workout-msg {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.login-prompt {
+    margin-top: 1rem;
+    color: #666;
+}
+
+/* Workout detail — per-set breakdown */
+.sets-detail {
+    background-color: #f9f9f9;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin: 0.75rem 0;
+}
+
+.set-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #eee;
+}
+
+.set-detail-row:last-child {
+    border-bottom: none;
+}
+
+.set-num {
+    min-width: 50px;
+    font-weight: bold;
+    color: #4a76a8;
+    font-size: 0.85rem;
+}
+
+.set-weight {
+    font-weight: bold;
+    color: #333;
+}
+
+.set-x {
+    color: #aaa;
+}
+
+.set-reps {
+    color: #555;
+}
+
+/* Routine badges on workout detail */
+.routine-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+}
+
+.routine-badge.gym {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.routine-badge.bwf {
+    background-color: #e8f0f8;
+    color: #4a76a8;
+}

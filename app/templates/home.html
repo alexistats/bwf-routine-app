@@ -1,11 +1,27 @@
 {% extends "base.html" %}
-{% block title %}BWF Routine - Home{% endblock %}
+{% block title %}{% if routine_type == 'gym' %}Gym Routine{% else %}BWF Routine{% endif %} - Home{% endblock %}
 {% block content %}
 <div class="routine-container">
-    {% if current_user.is_authenticated and session.get('current_workout_id') %}
-        <div class="active-workout-banner">
-            <p>Workout in progress! Don't forget to log your exercises.</p>
-        </div>
+
+    <div class="routine-tabs">
+        <a href="{{ url_for('main.home', routine='bwf') }}"
+           class="routine-tab {% if routine_type == 'bwf' %}active{% endif %}">BWF Routine</a>
+        <a href="{{ url_for('main.home', routine='gym') }}"
+           class="routine-tab {% if routine_type == 'gym' %}active{% endif %}">Gym Routine</a>
+    </div>
+
+    {% if current_user.is_authenticated %}
+        {% if session.get('current_workout_id') %}
+            <div class="active-workout-banner">
+                <p>Workout in progress! Don't forget to log your exercises.</p>
+            </div>
+        {% else %}
+            <div class="start-workout-cta">
+                <a href="{{ url_for('main.start_workout', routine_type=routine_type) }}" class="btn primary">
+                    Start {% if routine_type == 'gym' %}Gym{% else %}BWF{% endif %} Workout
+                </a>
+            </div>
+        {% endif %}
     {% endif %}
 
     {% for section, exercises in routine.items() %}
@@ -14,11 +30,15 @@
             <ul class="exercise-list">
                 {% for exercise in exercises %}
                 <li>
-                    <a href="{{ url_for('main.exercise', section=section, index=loop.index0) }}" class="exercise-card">
+                    <a href="{{ url_for('main.exercise', section=section, index=loop.index0, routine=routine_type) }}"
+                       class="exercise-card">
                         <h3>{{ exercise.name }}</h3>
                         <div class="exercise-meta">
                             <span>{{ exercise.sets }} sets</span>
                             <span>{{ exercise.reps }} reps</span>
+                            {% if exercise.get('weighted') %}
+                            <span class="weighted-badge">weighted</span>
+                            {% endif %}
                         </div>
                     </a>
                 </li>
@@ -26,5 +46,6 @@
             </ul>
         </section>
     {% endfor %}
+
 </div>
 {% endblock %}

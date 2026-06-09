@@ -17,7 +17,7 @@
                     {% if session.get('current_workout_id') %}
                         <a href="{{ url_for('main.end_workout') }}" class="workout-active">End Workout</a>
                     {% else %}
-                        <a href="{{ url_for('main.start_workout') }}">Start Workout</a>
+                        <a href="{{ url_for('main.start_workout', routine_type=session.get('current_routine_view', 'bwf')) }}">Start Workout</a>
                     {% endif %}
                     <a href="{{ url_for('main.progress') }}">Progress</a>
                     <a href="{{ url_for('main.logout') }}">Logout</a>
