@@ -739,8 +739,8 @@ footer {
     font-size: 1rem;
 }
 
-/* ── Plate picker ───────────────────────────────────────────── */
-.plate-picker {
+/* ── Weight picker ──────────────────────────────────────────── */
+.weight-picker {
     background-color: white;
     border: 1px solid #e0e6ec;
     border-radius: 6px;
@@ -748,26 +748,192 @@ footer {
     margin-bottom: 1rem;
 }
 
-.plate-picker-header {
+.picker-header {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
 }
 
-.plate-picker-title {
+.picker-title {
     font-size: 0.8rem;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: #888;
+    flex: 1;
 }
 
-.plate-total {
-    font-size: 1.2rem;
+.picker-total {
+    font-size: 1.15rem;
     font-weight: bold;
     color: #4a76a8;
     font-variant-numeric: tabular-nums;
+}
+
+.picker-settings-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    line-height: 1;
+}
+.picker-settings-btn:hover { color: #555; }
+
+/* Settings panel */
+.picker-settings-panel {
+    background-color: #f4f7fa;
+    border-radius: 5px;
+    padding: 0.6rem;
+    margin-bottom: 0.75rem;
+}
+
+.settings-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.35rem;
+}
+.settings-row:last-child { margin-bottom: 0; }
+
+.settings-label {
+    font-size: 0.78rem;
+    font-weight: bold;
+    color: #888;
+    min-width: 60px;
+}
+
+.settings-opt-btn {
+    background-color: white;
+    border: 1px solid #cdd5de;
+    color: #555;
+    border-radius: 20px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.settings-opt-btn.active {
+    background-color: #4a76a8;
+    border-color: #4a76a8;
+    color: white;
+}
+
+/* Action buttons row */
+.picker-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+}
+
+.action-label {
+    font-size: 0.75rem;
+    color: #999;
+    font-weight: bold;
+}
+
+.action-sep {
+    width: 1px;
+    height: 16px;
+    background-color: #ddd;
+    margin: 0 0.1rem;
+}
+
+.action-btn {
+    border-radius: 4px;
+    padding: 0.28rem 0.6rem;
+    font-size: 0.82rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+.action-btn.ghost {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    color: #666;
+}
+.action-btn.blue {
+    background-color: #e8f0f8;
+    border-color: #c8d8e8;
+    color: #4a76a8;
+}
+.action-btn.blue.applied {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: white;
+}
+.action-btn.muted {
+    background-color: transparent;
+    border-color: transparent;
+    color: #bbb;
+    margin-left: auto;
+    font-size: 1rem;
+}
+
+/* Dumbbell weight grid */
+.db-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+}
+
+.db-step-btn {
+    background-color: #f5f8fc;
+    border: 1px solid #d0dce8;
+    color: #4a76a8;
+    border-radius: 20px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.db-step-btn.selected {
+    background-color: #4a76a8;
+    border-color: #4a76a8;
+    color: white;
+}
+.db-step-btn:active { transform: scale(0.94); }
+
+/* Machine stepper */
+.machine-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.stepper-btn {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #333;
+    border-radius: 4px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+.stepper-btn:active { background-color: #e8e8e8; }
+
+.stepper-label {
+    font-size: 0.78rem;
+    color: #999;
+    flex: 1;
+    text-align: center;
+}
+
+.picker-hint {
+    font-size: 0.78rem;
+    color: #aaa;
+    margin: 0;
+    text-align: center;
 }
 
 .barbell-visual {
@@ -846,43 +1012,6 @@ footer {
     transform: scale(0.92);
 }
 
-.plate-apply {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.plate-apply-label {
-    font-size: 0.8rem;
-    color: #888;
-    font-weight: bold;
-}
-
-.plate-apply-btn,
-.plate-clear-btn {
-    background-color: #e8f0f8;
-    border: 1px solid #c8d8e8;
-    color: #4a76a8;
-    border-radius: 4px;
-    padding: 0.35rem 0.7rem;
-    font-size: 0.85rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.plate-apply-btn.applied {
-    background-color: #27ae60;
-    border-color: #27ae60;
-    color: white;
-}
-
-.plate-clear-btn {
-    background-color: #f5f5f5;
-    border-color: #ddd;
-    color: #888;
-    margin-left: auto;
-}
 
 /* ── Bottom timer bar ───────────────────────────────────────── */
 .timer-bar {
