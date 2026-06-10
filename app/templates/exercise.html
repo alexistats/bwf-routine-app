@@ -14,12 +14,6 @@
             <h3>Reps</h3>
             <p>{{ exercise.reps }}</p>
         </div>
-        {% if rest_period %}
-        <div class="info-card">
-            <h3>Rest</h3>
-            <p>{{ rest_period }}s</p>
-        </div>
-        {% endif %}
     </div>
 
     <div class="exercise-description">
@@ -27,163 +21,36 @@
         <p>{{ exercise.description }}</p>
     </div>
 
-    {# ── GYM exercise logging form ── #}
-    {% if routine == 'gym' %}
-
-        {% if current_user.is_authenticated %}
-            {% if not session.get('current_workout_id') %}
-            <div class="log-exercise-form">
-                <p class="no-workout-msg">Start a workout to log this exercise.</p>
-                <a href="{{ url_for('main.start_workout', routine_type='gym') }}" class="btn primary">Start Gym Workout</a>
-            </div>
-            {% else %}
-
-            {% set num_sets = exercise.sets|int %}
-            {% set last_weights = last_log.weight_per_set.split(',') if last_log and last_log.weight_per_set else [] %}
-            {% set last_reps = last_log.reps_per_set.split(',') if last_log and last_log.reps_per_set else [] %}
-            {% set last_unit = last_log.weight_unit if last_log and last_log.weight_unit else 'lbs' %}
-
-            <div class="log-exercise-form">
-                <h3>Log This Exercise</h3>
-
-                {% if last_log %}
-                <div class="last-session-summary">
-                    <span class="last-session-label">Last session:</span>
-                    {% for i in range(last_reps|length) %}
-                    <span class="last-set-badge"
-                          data-lbs-value="{{ last_weights[i] if i < last_weights|length else '' }}"
-                          data-stored-unit="{{ last_unit }}">
-                        {% if i < last_weights|length and last_weights[i] != '0' %}
-                        <span class="last-weight-display">{{ last_weights[i] }}</span>
-                        <span class="last-unit-label">{{ last_unit }}</span> ×
-                        {% endif %}
-                        {{ last_reps[i] }} reps
-                    </span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                {% if exercise.weighted %}
-                <div class="unit-toggle">
-                    <span class="unit-toggle-label">Unit:</span>
-                    <button type="button" id="btn-lbs" class="unit-toggle-btn" onclick="setUnit('lbs')">lbs</button>
-                    <button type="button" id="btn-kg" class="unit-toggle-btn" onclick="setUnit('kg')">kg</button>
-                </div>
-                {% endif %}
-
-                <form method="POST" action="{{ url_for('main.log_exercise', exercise_name=exercise.name) }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <input type="hidden" name="section" value="{{ section }}">
-                    <input type="hidden" name="index" value="{{ request.view_args.index }}">
-                    <input type="hidden" name="routine" value="{{ routine }}">
-                    <input type="hidden" name="weight_unit" id="weight-unit-input" value="lbs">
-
-                    {% for i in range(1, num_sets + 1) %}
-                    <div class="set-row">
-                        <span class="set-label">Set {{ i }}</span>
-                        <div class="set-inputs">
-                            {% if exercise.weighted %}
-                            <div class="form-group">
-                                <label>Weight (<span class="unit-display">lbs</span>)</label>
-                                <input type="number"
-                                       class="weight-input"
-                                       name="weight_set_{{ i }}"
-                                       id="weight_set_{{ i }}"
-                                       step="0.5" min="0"
-                                       data-stored-value="{{ last_weights[i-1] if last_weights|length >= i else '' }}"
-                                       data-stored-unit="{{ last_unit }}"
-                                       value="{{ last_weights[i-1] if last_weights|length >= i else '' }}">
-                            </div>
-                            {% endif %}
-                            <div class="form-group">
-                                <label>Reps</label>
-                                <input type="number"
-                                       name="reps_set_{{ i }}"
-                                       id="reps_set_{{ i }}"
-                                       min="1" max="100"
-                                       value="{{ last_reps[i-1] if last_reps|length >= i else '' }}">
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-
-                    <div class="form-group">
-                        <label for="notes">Notes</label>
-                        <textarea id="notes" name="notes" rows="2"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn primary">Log Exercise</button>
-                </form>
-            </div>
-            {% endif %}
-        {% else %}
-        <p class="login-prompt"><a href="{{ url_for('main.login') }}">Log in</a> to track your progress.</p>
-        {% endif %}
-
-    {# ── BWF progression logging form ── #}
-    {% elif progression_data and user_progression %}
+    {% if progression_data and user_progression %}
+    {% set current_level = user_progression.current_progression %}
+    {% set current_prog = progression_data[current_level - 1] %}
     <div class="progression-section">
         <h3>Your Current Progression</h3>
-        {% set current_level = user_progression.current_progression %}
-        {% set current_exercise = progression_data|selectattr('level', 'eq', current_level)|first %}
-
         <div class="current-progression">
-            <h4>{{ current_exercise.name }} (Level {{ current_level }})</h4>
-            <p>{{ current_exercise.description }}</p>
+            <h4>{{ current_prog.name }} (Level {{ current_level }}/{{ progression_data|length }})</h4>
+            <p>{{ current_prog.description }}</p>
             <p class="progression-goal">Goal: 3 sets of 8 reps with good form</p>
-            <p class="progression-current">Current: 3 sets of {{ user_progression.current_reps }} reps</p>
+            <p class="progression-current">Current target: 3 × {{ user_progression.current_reps }} reps</p>
         </div>
-
-        {% if current_user.is_authenticated %}
-        <div class="log-exercise-form">
-            <h3>Log Your Progress</h3>
-            <form method="POST" action="{{ url_for('main.log_exercise', exercise_name=exercise.name) }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="section" value="{{ section }}">
-                <input type="hidden" name="index" value="{{ request.view_args.index }}">
-                <input type="hidden" name="routine" value="{{ routine }}">
-                <input type="hidden" name="progression_level" value="{{ current_level }}">
-
-                <div class="form-group">
-                    <label for="sets_completed">Sets Completed</label>
-                    <select id="sets_completed" name="sets_completed" onchange="updateRepInputs(this.value)">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3" selected>3</option>
-                    </select>
-                </div>
-
-                <div id="rep-inputs" data-default-reps="{{ user_progression.current_reps }}">
-                    {% for i in range(1, 4) %}
-                    <div class="form-group">
-                        <label for="reps_set_{{ i }}">Reps (Set {{ i }})</label>
-                        <input type="number" id="reps_set_{{ i }}" name="reps_set_{{ i }}" min="1" max="20" value="{{ user_progression.current_reps }}">
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <div class="form-group">
-                    <label for="notes">Notes</label>
-                    <textarea id="notes" name="notes" rows="3"></textarea>
-                </div>
-
-                <button type="submit" class="btn primary">Log Exercise</button>
-            </form>
-        </div>
+        {% if progression_data|length > current_level %}
+        {% set next_prog = progression_data[current_level] %}
+        <p class="progression-next">Next: {{ next_prog.name }}</p>
         {% endif %}
+    </div>
+    {% elif progression_data %}
+    <div class="progression-section">
+        <h3>Progressions</h3>
+        {% for level in progression_data %}
+        <div class="current-progression">
+            <h4>Level {{ level.level }}: {{ level.name }}</h4>
+            <p>{{ level.description }}</p>
+        </div>
+        {% endfor %}
     </div>
     {% endif %}
 
-    <div class="timer-section" data-rest-period="{{ rest_period or 90 }}">
-        <h3>Rest Timer</h3>
-        <div class="timer-display">00:00</div>
-        <div class="timer-controls">
-            <button id="timer-60" class="timer-btn">60s</button>
-            <button id="timer-90" class="timer-btn">90s</button>
-            <button id="timer-120" class="timer-btn">2min</button>
-            <button id="timer-start" class="timer-btn primary">Start</button>
-            <button id="timer-reset" class="timer-btn">Reset</button>
-        </div>
-    </div>
+    {% if session.get('current_workout_id') %}
+    <p class="log-hint">Log this exercise by expanding its card on the <a href="{{ url_for('main.home', routine=routine) }}">home page</a>.</p>
+    {% endif %}
 </div>
 {% endblock %}

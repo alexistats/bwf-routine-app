@@ -101,7 +101,7 @@ def test_workout_detail_blocked_for_other_users(logged_in_client, app):
     assert b'do not have permission' in resp.data
 
 
-def test_gym_exercise_page_prefills_last_log(logged_in_client):
+def test_home_page_prefills_last_gym_log(logged_in_client):
     client = logged_in_client
     client.get('/start_workout?routine_type=gym')
     client.post('/log_exercise/Bench Press', data={
@@ -110,7 +110,7 @@ def test_gym_exercise_page_prefills_last_log(logged_in_client):
         'weight_set_1': '105', 'reps_set_1': '9',
     })
 
-    resp = client.get('/exercise/Push/0?routine=gym')
+    resp = client.get('/?routine=gym')
     assert resp.status_code == 200
     assert b'Last session' in resp.data
     assert b'105' in resp.data
