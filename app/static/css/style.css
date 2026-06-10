@@ -1486,3 +1486,92 @@ body.timer-visible main {
         padding: 0.75rem 2rem;
     }
 }
+/* ── AI program generation ───────────────────────────────────────── */
+.routine-tabs {
+    flex-wrap: wrap;
+}
+
+.routine-tab-new {
+    color: #7a5ca8;
+}
+
+.ai-program-header {
+    margin-bottom: 1rem;
+}
+
+.ai-program-description {
+    color: #555;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+.generate-container {
+    max-width: 540px;
+}
+
+.generate-intro {
+    color: #555;
+    margin-bottom: 1.25rem;
+}
+
+.equipment-checks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 0.75rem;
+}
+
+.equipment-check {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.generate-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.generate-row .form-group {
+    flex: 1;
+}
+
+.preview-card {
+    cursor: default;
+}
+
+.preview-description {
+    color: #555;
+    font-size: 0.9rem;
+    margin-top: 0.35rem;
+}
+
+.preview-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.preview-actions .restore-btn.full-width {
+    width: 100%;
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.settings-section h3 {
+    margin-bottom: 0.5rem;
+}
+
+.settings-hint {
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+}
+
+.settings-key-status {
+    margin-bottom: 0.5rem;
+}

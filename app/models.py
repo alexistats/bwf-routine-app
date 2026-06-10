@@ -1,6 +1,11 @@
 from app import db, login_manager
+from flask import current_app
 from flask_login import UserMixin
 from datetime import datetime, timezone
+from cryptography.fernet import Fernet
+import base64
+import hashlib
+import json
 
 
 def utc_now():
@@ -85,6 +90,54 @@ class HiddenExercise(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     routine_type = db.Column(db.String(20), default='gym')
     exercise_name = db.Column(db.String(100))
+
+
+def _fernet():
+    """Symmetric cipher keyed off SECRET_KEY — no extra env var needed."""
+    digest = hashlib.sha256(current_app.config['SECRET_KEY'].encode()).digest()
+    return Fernet(base64.urlsafe_b64encode(digest))
+
+
+class UserApiKey(db.Model):
+    """A user's own LLM API key, stored encrypted. Overrides the server key."""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), unique=True)
+    provider = db.Column(db.String(20), default='anthropic')
+    encrypted_key = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    def set_key(self, raw_key):
+        self.encrypted_key = _fernet().encrypt(raw_key.encode()).decode()
+
+    def get_key(self):
+        return _fernet().decrypt(self.encrypted_key.encode()).decode()
+
+    def key_hint(self):
+        """Last 4 characters, for display without echoing the key."""
+        return self.get_key()[-4:]
+
+
+class GeneratedProgram(db.Model):
+    """An AI-generated workout program. Draft until accepted on preview."""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), index=True)
+    name = db.Column(db.String(100))
+    goal = db.Column(db.String(200))
+    description = db.Column(db.Text, default='')
+    program_json = db.Column(db.Text)  # {"Section": [gym-schema exercise dicts]}
+    inputs_json = db.Column(db.Text)   # generation form inputs, kept for retries
+    is_draft = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=utc_now)
+
+    @property
+    def routine_key(self):
+        return f'ai-{self.id}'
+
+    def routine_data(self):
+        return json.loads(self.program_json)
+
+    def inputs(self):
+        return json.loads(self.inputs_json) if self.inputs_json else {}
 
 
 class UserProgression(db.Model):

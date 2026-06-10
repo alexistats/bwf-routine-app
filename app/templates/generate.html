@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}AI Program Generator{% endblock %}
+{% block content %}
+<div class="auth-container generate-container">
+    <h2>✨ Build a program with AI</h2>
+    <p class="generate-intro">Tell the coach your goal, gear, and schedule — Claude designs a
+        program you can preview, tweak, and train with like any other routine.</p>
+
+    {% if not has_api_key %}
+    <div class="flash-message">
+        No Claude API key is configured yet.
+        <a href="{{ url_for('main.settings') }}">Add your key in Settings</a> to generate programs.
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('main.generate') }}" id="generate-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+            <label for="goal">What are you training for?</label>
+            <input type="text" id="goal" name="goal" required maxlength="200"
+                   placeholder="e.g. climbing, a 5k run, ringette season, general strength">
+        </div>
+
+        <div class="form-group">
+            <label>Available equipment</label>
+            <div class="equipment-checks">
+                {% for choice in equipment_choices %}
+                <label class="equipment-check">
+                    <input type="checkbox" name="equipment" value="{{ choice }}"
+                           {% if choice == 'bodyweight only' %}{% endif %}>
+                    {{ choice }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="generate-row">
+            <div class="form-group">
+                <label for="days_per_week">Days / week</label>
+                <input type="number" id="days_per_week" name="days_per_week"
+                       min="1" max="7" value="3">
+            </div>
+            <div class="form-group">
+                <label for="session_length">Minutes / session</label>
+                <input type="number" id="session_length" name="session_length"
+                       min="15" max="180" step="15" value="60">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="experience">Experience level</label>
+            <select id="experience" name="experience">
+                {% for level in experience_levels %}
+                <option value="{{ level }}">{{ level|capitalize }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Anything else? (optional)</label>
+            <textarea id="notes" name="notes" rows="2" maxlength="500"
+                      placeholder="injuries to work around, exercises you love or hate…"></textarea>
+        </div>
+
+        <button type="submit" class="btn primary full-width" id="generate-btn"
+                {% if not has_api_key %}disabled{% endif %}>Generate my program</button>
+        <p class="launcher-hint" id="generate-wait-hint" hidden>
+            The coach is thinking — this usually takes 30–60 seconds…</p>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('generate-form').addEventListener('submit', function () {
+    var btn = document.getElementById('generate-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Generating…';
+    document.getElementById('generate-wait-hint').hidden = false;
+});
+</script>
+{% endblock %}

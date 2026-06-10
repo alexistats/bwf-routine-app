@@ -8,6 +8,10 @@ class Config:
         warnings.warn('SECRET_KEY is not set — using an insecure development key. '
                       'Set the SECRET_KEY environment variable in production.')
 
+    # Server-wide default key for AI program generation. Optional — users can
+    # also store their own key in Settings, which takes precedence.
+    ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+
     _db_uri = os.environ.get('DATABASE_URL') or 'sqlite:///bwf_routine.db'
     # SQLAlchemy 2.x requires 'postgresql://' — Render/Neon provide 'postgres://'
     if _db_uri.startswith('postgres://'):
