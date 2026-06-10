@@ -269,15 +269,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const hdr = mkEl('div', 'picker-header');
         const title = mkEl('span', 'picker-title');
         const titleText = eq === 'barbell' ? 'Plate calculator'
-                        : eq === 'dumbbell' ? 'Dumbbell weight'
-                        : 'Quick fill';
+                        : eq === 'dumbbell' ? 'Dumbbell rack'
+                        : 'Weight stack';
         title.innerHTML = (EQ_ICONS[eq] || '') + ' ' + titleText;
         hdr.appendChild(title);
-        if (eq === 'barbell') {
-            const tot = mkEl('span', 'picker-total');
-            tot.innerHTML = '<span class="picker-total-value"></span> <span class="unit-display picker-unit"></span>';
-            hdr.appendChild(tot);
-        }
+        const tot = mkEl('span', 'picker-total');
+        tot.innerHTML = '<span class="picker-total-value"></span> <span class="unit-display picker-unit"></span>';
+        hdr.appendChild(tot);
         const settingsBtn = mkEl('button', 'picker-settings-btn');
         settingsBtn.type = 'button';
         settingsBtn.textContent = '⚙';
@@ -314,6 +312,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 bwRow.appendChild(b);
             });
             sp.appendChild(bwRow);
+        }
+        if (eq === 'machine') {
+            const ssRow = mkEl('div', 'settings-row');
+            const ssLabel = mkEl('span', 'settings-label');
+            ssLabel.textContent = 'Per plate:';
+            ssRow.appendChild(ssLabel);
+            const curStep = stackStep(p);
+            (currentUnit === 'kg' ? [2.5, 5, 7.5, 10] : [5, 10, 15, 20]).forEach(function (w) {
+                const b = mkEl('button', 'settings-opt-btn' + (w === curStep ? ' active' : ''));
+                b.type = 'button';
+                b.dataset.setStackStep = w;
+                b.textContent = fmtW(w) + ' ' + currentUnit;
+                ssRow.appendChild(b);
+            });
+            sp.appendChild(ssRow);
         }
         p.appendChild(sp);
 
@@ -372,38 +385,166 @@ document.addEventListener('DOMContentLoaded', function () {
         drawBarbell(p);
     }
 
+    function firstSetWeight(p) {
+        const inp = getSetInputs(p)[0];
+        const v = inp ? parseFloat(inp.value) : NaN;
+        return isNaN(v) || v <= 0 ? null : v;
+    }
+
+    function fillAllSets(p, w) {
+        getSetInputs(p).forEach(function (inp) {
+            inp.value = fmtW(w);
+            inp.classList.add('just-filled');
+            setTimeout(function () { inp.classList.remove('just-filled'); }, 500);
+        });
+    }
+
+    function nearestIndex(arr, value) {
+        let best = 0;
+        arr.forEach(function (w, i) {
+            if (Math.abs(w - value) < Math.abs(arr[best] - value)) best = i;
+        });
+        return best;
+    }
+
+    // ── Dumbbell: visual rack stepper ──
     function buildDumbbellContent(p) {
-        const steps = mkEl('div', 'db-steps');
-        curDbSteps().forEach(function (w) {
+        const steps = curDbSteps();
+        const w0 = firstSetWeight(p);
+        p._dbIndex = w0 != null ? nearestIndex(steps, w0) : Math.floor(steps.length / 3);
+
+        const vis = mkEl('div', 'dumbbell-visual');
+        const prev = mkEl('button', 'db-arrow');
+        prev.type = 'button';
+        prev.dataset.dbPrev = '1';
+        prev.textContent = '−';
+        const draw = mkEl('div', 'db-draw');
+        const next = mkEl('button', 'db-arrow');
+        next.type = 'button';
+        next.dataset.dbNext = '1';
+        next.textContent = '+';
+        vis.appendChild(prev);
+        vis.appendChild(draw);
+        vis.appendChild(next);
+        p.appendChild(vis);
+
+        const chips = mkEl('div', 'db-steps');
+        steps.forEach(function (w) {
             const b = mkEl('button', 'db-step-btn');
             b.type = 'button';
             b.dataset.dbWeight = w;
             b.textContent = fmtW(w);
-            steps.appendChild(b);
+            chips.appendChild(b);
         });
-        p.appendChild(steps);
+        p.appendChild(chips);
+
         const hint = mkEl('p', 'picker-hint');
-        hint.textContent = 'Tap a weight to fill all sets';
+        hint.textContent = 'Step through the rack — fills all sets';
         p.appendChild(hint);
+
+        renderDumbbell(p);
+    }
+
+    function renderDumbbell(p) {
+        const steps = curDbSteps();
+        p._dbIndex = Math.max(0, Math.min(p._dbIndex || 0, steps.length - 1));
+        const w = steps[p._dbIndex];
+        const ratio = (p._dbIndex + 1) / steps.length;
+
+        const draw = p.querySelector('.db-draw');
+        if (!draw) return;
+        draw.innerHTML = '';
+
+        const discs = 1 + Math.floor(ratio * 2.4); // 1–3 discs per side
+        const baseH = Math.round(26 + 34 * ratio);
+
+        function mkSide(reverse) {
+            const side = mkEl('div', 'db-side');
+            // Biggest disc closest to the handle
+            for (let i = 0; i < discs; i++) {
+                const d = mkEl('div', 'db-disc');
+                d.style.height = Math.max(16, baseH - i * 7) + 'px';
+                side.appendChild(d);
+            }
+            if (!reverse) {
+                // Mirror so the big disc faces the handle on both sides
+                Array.from(side.children).reverse().forEach(function (c) { side.appendChild(c); });
+            }
+            return side;
+        }
+
+        draw.appendChild(mkSide(false));
+        draw.appendChild(mkEl('div', 'db-handle'));
+        draw.appendChild(mkSide(true));
+
+        const lbl = mkEl('div', 'db-weight-label');
+        lbl.textContent = fmtW(w);
+        draw.appendChild(lbl);
+
+        p.querySelectorAll('.db-step-btn').forEach(function (b) {
+            b.classList.toggle('selected', parseFloat(b.dataset.dbWeight) === w);
+        });
+        const sel = p.querySelector('.db-step-btn.selected');
+        if (sel) {
+            const row = sel.parentElement;
+            row.scrollLeft = sel.offsetLeft - row.clientWidth / 2 + sel.clientWidth / 2;
+        }
+
+        const tv = p.querySelector('.picker-total-value');
+        if (tv) tv.textContent = fmtW(w);
+        p.querySelectorAll('.picker-unit').forEach(function (el) { el.textContent = currentUnit; });
+        return w;
+    }
+
+    // ── Machine: tap-the-pin weight stack ──
+    const STACK_PLATES = 15;
+
+    function stackStep(p) {
+        const pref = getExPref(p.dataset.exercise);
+        const saved = currentUnit === 'kg' ? pref.stackStepKg : pref.stackStepLbs;
+        return saved || (currentUnit === 'kg' ? 5 : 10);
     }
 
     function buildMachineContent(p) {
-        const step = currentUnit === 'kg' ? 2.5 : 5;
-        const row = mkEl('div', 'machine-stepper');
-        const minus = mkEl('button', 'stepper-btn');
-        minus.type = 'button';
-        minus.dataset.machineStep = -step;
-        minus.textContent = '−' + fmtW(step);
-        const lbl = mkEl('span', 'stepper-label');
-        lbl.textContent = 'Adjust all sets';
-        const plus = mkEl('button', 'stepper-btn');
-        plus.type = 'button';
-        plus.dataset.machineStep = step;
-        plus.textContent = '+' + fmtW(step);
-        row.appendChild(minus);
-        row.appendChild(lbl);
-        row.appendChild(plus);
-        p.appendChild(row);
+        const step = stackStep(p);
+        const w0 = firstSetWeight(p);
+        p._pin = w0 != null
+            ? Math.max(1, Math.min(STACK_PLATES, Math.round(w0 / step)))
+            : 5;
+
+        const wrap = mkEl('div', 'machine-visual');
+        const stack = mkEl('div', 'machine-stack');
+        for (let i = 1; i <= STACK_PLATES; i++) {
+            const plate = mkEl('button', 'stack-plate');
+            plate.type = 'button';
+            plate.dataset.pin = i;
+            const num = mkEl('span', 'stack-plate-num');
+            num.textContent = fmtW(i * step);
+            plate.appendChild(num);
+            stack.appendChild(plate);
+        }
+        wrap.appendChild(stack);
+        p.appendChild(wrap);
+
+        const hint = mkEl('p', 'picker-hint');
+        hint.textContent = 'Tap the stack to set the pin — fills all sets';
+        p.appendChild(hint);
+
+        renderStack(p);
+    }
+
+    function renderStack(p) {
+        const step = stackStep(p);
+        p.querySelectorAll('.stack-plate').forEach(function (plate) {
+            const i = parseInt(plate.dataset.pin, 10);
+            plate.classList.toggle('selected', i <= p._pin);
+            plate.classList.toggle('pinned', i === p._pin);
+        });
+        const total = p._pin * step;
+        const tv = p.querySelector('.picker-total-value');
+        if (tv) tv.textContent = fmtW(total);
+        p.querySelectorAll('.picker-unit').forEach(function (el) { el.textContent = currentUnit; });
+        return total;
     }
 
     function drawBarbell(p) {
@@ -538,22 +679,34 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             return;
         }
-        // Machine stepper
-        const stepEl = e.target.closest('[data-machine-step]');
-        if (stepEl) {
-            const delta = parseFloat(stepEl.dataset.machineStep);
-            getSetInputs(p).forEach(function (inp) {
-                inp.value = fmtW(Math.max(0, (parseFloat(inp.value) || 0) + delta));
-            });
+        // Machine stack-step setting
+        const ssEl = e.target.closest('[data-set-stack-step]');
+        if (ssEl) {
+            const key = currentUnit === 'kg' ? 'stackStepKg' : 'stackStepLbs';
+            const patch = {};
+            patch[key] = parseFloat(ssEl.dataset.setStackStep);
+            setExPref(p.dataset.exercise, patch);
+            buildPicker(p);
             return;
         }
-        // Dumbbell weight select
+        // Machine: tap a plate to set the pin
+        const pinEl = e.target.closest('[data-pin]');
+        if (pinEl) {
+            p._pin = parseInt(pinEl.dataset.pin, 10);
+            fillAllSets(p, renderStack(p));
+            return;
+        }
+        // Dumbbell: step through the rack
+        if (e.target.closest('[data-db-prev]') || e.target.closest('[data-db-next]')) {
+            p._dbIndex = (p._dbIndex || 0) + (e.target.closest('[data-db-next]') ? 1 : -1);
+            fillAllSets(p, renderDumbbell(p));
+            return;
+        }
+        // Dumbbell: jump straight to a rack weight
         const dbEl = e.target.closest('[data-db-weight]');
         if (dbEl) {
-            p.querySelectorAll('[data-db-weight]').forEach(function (b) { b.classList.remove('selected'); });
-            dbEl.classList.add('selected');
-            const w = parseFloat(dbEl.dataset.dbWeight);
-            getSetInputs(p).forEach(function (inp) { inp.value = fmtW(w); });
+            p._dbIndex = curDbSteps().indexOf(parseFloat(dbEl.dataset.dbWeight));
+            fillAllSets(p, renderDumbbell(p));
         }
     });
 

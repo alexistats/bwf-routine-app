@@ -1059,12 +1059,15 @@ footer {
     font-size: 1rem;
 }
 
-/* Dumbbell weight grid */
+/* Dumbbell weight chips — single scrollable row */
 .db-steps {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     gap: 0.35rem;
     margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
 }
 
 .db-step-btn {
@@ -1085,31 +1088,137 @@ footer {
 }
 .db-step-btn:active { transform: scale(0.94); }
 
-/* Machine stepper */
-.machine-stepper {
+/* Dumbbell visual rack */
+.dumbbell-visual {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
+    justify-content: center;
+    gap: 0.75rem;
+    background-color: #f4f7fa;
+    border-radius: 5px;
+    padding: 0.6rem 0.5rem 1.6rem;
+    margin-bottom: 0.6rem;
 }
 
-.stepper-btn {
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    color: #333;
-    border-radius: 4px;
-    padding: 0.4rem 0.8rem;
+.db-arrow {
+    background-color: white;
+    border: 2px solid #c8d8e8;
+    color: #4a76a8;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.db-arrow:active { transform: scale(0.92); }
+
+.db-draw {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 110px;
+    min-height: 64px;
+    justify-content: center;
+}
+
+.db-side {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.db-disc {
+    width: 10px;
+    background: linear-gradient(90deg, #3d566e, #2c3e50);
+    border-radius: 3px;
+    box-shadow: inset -2px 0 3px rgba(0,0,0,0.3);
+}
+
+.db-handle {
+    width: 44px;
+    height: 7px;
+    background: linear-gradient(#b8c2cc, #8f9aa5);
+    border-radius: 2px;
+}
+
+.db-weight-label {
+    position: absolute;
+    bottom: -22px;
+    left: 0;
+    right: 0;
+    text-align: center;
     font-size: 0.95rem;
     font-weight: bold;
-    cursor: pointer;
+    color: #4a76a8;
+    font-variant-numeric: tabular-nums;
 }
-.stepper-btn:active { background-color: #e8e8e8; }
 
-.stepper-label {
-    font-size: 0.78rem;
-    color: #999;
-    flex: 1;
-    text-align: center;
+/* Machine pin stack */
+.machine-visual {
+    display: flex;
+    justify-content: center;
+    background-color: #f4f7fa;
+    border-radius: 5px;
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.machine-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 150px;
+}
+
+.stack-plate {
+    position: relative;
+    height: 15px;
+    background-color: #d5dde5;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.stack-plate-num {
+    font-size: 0.62rem;
+    font-weight: bold;
+    color: #8a98a8;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.stack-plate.selected {
+    background-color: #4a76a8;
+}
+
+.stack-plate.selected .stack-plate-num {
+    color: white;
+}
+
+.stack-plate.pinned::after {
+    content: '';
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #f1c40f;
+    border: 2px solid #d4ac0d;
+}
+
+/* Brief highlight when the picker fills inputs */
+.weight-input.just-filled {
+    background-color: #eafaf1;
+    transition: background-color 0.4s;
 }
 
 .picker-hint {
