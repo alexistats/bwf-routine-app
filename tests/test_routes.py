@@ -114,3 +114,13 @@ def test_home_page_prefills_last_gym_log(logged_in_client):
     assert resp.status_code == 200
     assert b'Last session' in resp.data
     assert b'105' in resp.data
+
+
+def test_plate_picker_only_on_barbell_exercises(logged_in_client):
+    client = logged_in_client
+    client.get('/start_workout?routine_type=gym')
+
+    resp = client.get('/?routine=gym')
+    assert resp.status_code == 200
+    # Bench Press is the only barbell exercise in the gym routine
+    assert resp.data.count(b'Plate calculator') == 1

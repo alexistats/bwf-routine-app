@@ -208,6 +208,145 @@ document.addEventListener('DOMContentLoaded', function () {
         if (btn) btn.textContent = '▶';
     };
 
+    // ── Plate picker (barbell exercises) ───────────────────────────
+    const PLATE_DENOMS = {
+        lbs: [45, 35, 25, 10, 5, 2.5],
+        kg: [20, 15, 10, 5, 2.5, 1.25],
+    };
+    const BAR_WEIGHT = { lbs: 45, kg: 20 };
+    // Roughly the IPF colour convention, applied by size rank in both units
+    const PLATE_COLORS = ['#c0392b', '#2962a8', '#f1c40f', '#27ae60', '#7f8c8d', '#bdc3c7'];
+
+    function initPlatePickers() {
+        document.querySelectorAll('.plate-picker').forEach(function (picker) {
+            picker._plates = []; // weights loaded per side, in tap order
+            renderPlateButtons(picker);
+            renderBarbell(picker);
+        });
+    }
+
+    function resetPlatePickers() {
+        document.querySelectorAll('.plate-picker').forEach(function (picker) {
+            picker._plates = [];
+            renderPlateButtons(picker);
+            renderBarbell(picker);
+        });
+    }
+
+    function renderPlateButtons(picker) {
+        const container = picker.querySelector('.plate-buttons');
+        if (!container) return;
+        container.innerHTML = '';
+        PLATE_DENOMS[currentUnit].forEach(function (w, rank) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'plate-add-btn';
+            btn.dataset.weight = w;
+            btn.textContent = formatWeight(w);
+            btn.style.borderColor = PLATE_COLORS[rank];
+            container.appendChild(btn);
+        });
+    }
+
+    function renderBarbell(picker) {
+        const visual = picker.querySelector('.barbell-visual');
+        if (!visual) return;
+        visual.innerHTML = '';
+
+        const plates = picker._plates;
+        const denoms = PLATE_DENOMS[currentUnit];
+        const maxW = denoms[0];
+        // Heaviest plates sit closest to the centre of the bar
+        const sorted = plates
+            .map(function (w, i) { return { w: w, i: i }; })
+            .sort(function (a, b) { return b.w - a.w; });
+
+        function makePlate(entry) {
+            const el = document.createElement('button');
+            el.type = 'button';
+            el.className = 'bv-plate';
+            el.dataset.idx = entry.i;
+            el.title = 'Remove ' + formatWeight(entry.w) + ' ' + currentUnit + ' pair';
+            const ratio = entry.w / maxW;
+            el.style.height = Math.round(26 + 44 * ratio) + 'px';
+            el.style.width = Math.max(7, Math.round(14 * ratio)) + 'px';
+            el.style.backgroundColor = PLATE_COLORS[denoms.indexOf(entry.w)] || '#7f8c8d';
+            return el;
+        }
+
+        const left = document.createElement('div');
+        left.className = 'bv-side bv-left';
+        const right = document.createElement('div');
+        right.className = 'bv-side bv-right';
+        // Mirror: outermost (lightest) plate first on the left side
+        sorted.slice().reverse().forEach(function (e) { left.appendChild(makePlate(e)); });
+        sorted.forEach(function (e) { right.appendChild(makePlate(e)); });
+
+        const bar = document.createElement('div');
+        bar.className = 'bv-bar';
+
+        visual.appendChild(left);
+        visual.appendChild(bar);
+        visual.appendChild(right);
+
+        if (plates.length === 0) {
+            const hint = document.createElement('div');
+            hint.className = 'bv-hint';
+            hint.textContent = 'Tap a plate below to load the bar — tap a loaded plate to remove it';
+            visual.appendChild(hint);
+        }
+
+        const totalEl = picker.querySelector('.plate-total-value');
+        if (totalEl) totalEl.textContent = formatWeight(plateTotal(picker));
+    }
+
+    function plateTotal(picker) {
+        const perSide = picker._plates.reduce(function (sum, w) { return sum + w; }, 0);
+        return BAR_WEIGHT[currentUnit] + 2 * perSide;
+    }
+
+    function formatWeight(w) {
+        return (Math.round(w * 100) / 100).toString();
+    }
+
+    document.addEventListener('click', function (e) {
+        const picker = e.target.closest('.plate-picker');
+        if (!picker) return;
+
+        const addBtn = e.target.closest('.plate-add-btn');
+        if (addBtn) {
+            picker._plates.push(parseFloat(addBtn.dataset.weight));
+            renderBarbell(picker);
+            return;
+        }
+
+        const plateEl = e.target.closest('.bv-plate');
+        if (plateEl) {
+            picker._plates.splice(parseInt(plateEl.dataset.idx, 10), 1);
+            renderBarbell(picker);
+            return;
+        }
+
+        const applyBtn = e.target.closest('.plate-apply-btn');
+        if (applyBtn) {
+            const panel = picker.closest('.exercise-panel');
+            const input = panel && panel.querySelector('input[name="weight_set_' + applyBtn.dataset.set + '"]');
+            if (input) {
+                input.value = plateTotal(picker);
+                applyBtn.classList.add('applied');
+                setTimeout(function () { applyBtn.classList.remove('applied'); }, 600);
+            }
+            return;
+        }
+
+        if (e.target.closest('.plate-clear-btn')) {
+            picker._plates = [];
+            renderBarbell(picker);
+        }
+    });
+
+    initPlatePickers();
+
     // ── Unit conversion ────────────────────────────────────────────
     function convertWeight(value, from, to) {
         if (from === to) return value;
@@ -227,6 +366,7 @@ document.addEventListener('DOMContentLoaded', function () {
         currentUnit = unit;
         localStorage.setItem('weightUnit', currentUnit);
         applyUnitUI(document);
+        resetPlatePickers(); // plate denominations are physical — swap sets, don't convert
     };
 
     function applyUnitUI(root) {

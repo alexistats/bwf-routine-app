@@ -102,6 +102,27 @@
                     </div>
                     {% endif %}
 
+                    {% if exercise.get('equipment') == 'barbell' %}
+                    <div class="plate-picker">
+                        <div class="plate-picker-header">
+                            <span class="plate-picker-title">Plate calculator</span>
+                            <span class="plate-total">
+                                <span class="plate-total-value">45</span>
+                                <span class="unit-display">lbs</span>
+                            </span>
+                        </div>
+                        <div class="barbell-visual"></div>
+                        <div class="plate-buttons"></div>
+                        <div class="plate-apply">
+                            <span class="plate-apply-label">Fill weight:</span>
+                            {% for i in range(1, num_sets + 1) %}
+                            <button type="button" class="plate-apply-btn" data-set="{{ i }}">Set {{ i }}</button>
+                            {% endfor %}
+                            <button type="button" class="plate-clear-btn">Clear</button>
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <form class="exercise-log-form" method="POST"
                           action="{{ url_for('main.log_exercise', exercise_name=exercise.name) }}"
                           data-card-id="{{ card_id }}">

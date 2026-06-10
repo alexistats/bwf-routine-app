@@ -739,6 +739,151 @@ footer {
     font-size: 1rem;
 }
 
+/* ── Plate picker ───────────────────────────────────────────── */
+.plate-picker {
+    background-color: white;
+    border: 1px solid #e0e6ec;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.plate-picker-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.plate-picker-title {
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #888;
+}
+
+.plate-total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4a76a8;
+    font-variant-numeric: tabular-nums;
+}
+
+.barbell-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90px;
+    background-color: #f4f7fa;
+    border-radius: 5px;
+    padding: 0.5rem 0.25rem;
+    margin-bottom: 0.6rem;
+    overflow-x: auto;
+}
+
+.bv-bar {
+    width: 90px;
+    min-width: 50px;
+    height: 8px;
+    background: linear-gradient(#b8c2cc, #8f9aa5);
+    border-radius: 2px;
+    flex-shrink: 1;
+}
+
+.bv-side {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.bv-plate {
+    border: none;
+    border-radius: 3px;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: inset -2px 0 3px rgba(0,0,0,0.25);
+    flex-shrink: 0;
+}
+
+.bv-plate:active {
+    opacity: 0.7;
+}
+
+.bv-hint {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.72rem;
+    color: #a5b1bd;
+    pointer-events: none;
+}
+
+.plate-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+}
+
+.plate-add-btn {
+    background-color: white;
+    border: 2px solid #7f8c8d;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.plate-add-btn:active {
+    transform: scale(0.92);
+}
+
+.plate-apply {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.plate-apply-label {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: bold;
+}
+
+.plate-apply-btn,
+.plate-clear-btn {
+    background-color: #e8f0f8;
+    border: 1px solid #c8d8e8;
+    color: #4a76a8;
+    border-radius: 4px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.plate-apply-btn.applied {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: white;
+}
+
+.plate-clear-btn {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    color: #888;
+    margin-left: auto;
+}
+
 /* ── Bottom timer bar ───────────────────────────────────────── */
 .timer-bar {
     position: fixed;

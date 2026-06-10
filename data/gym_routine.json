@@ -5,6 +5,7 @@
       "sets": "3",
       "reps": "8-12",
       "weighted": true,
+      "equipment": "barbell",
       "description": "Barbell bench press. Lower to mid-chest with control, press back up without locking out."
     },
     {
@@ -12,6 +13,7 @@
       "sets": "3",
       "reps": "8-12",
       "weighted": true,
+      "equipment": "dumbbell",
       "description": "Dumbbell shoulder press. Keep core tight, press overhead without arching the lower back."
     },
     {
@@ -19,6 +21,7 @@
       "sets": "3",
       "reps": "10-12",
       "weighted": true,
+      "equipment": "machine",
       "description": "Cable tricep pushdown with rope. Keep elbows pinned at sides, extend fully and spread rope at the bottom."
     }
   ],
@@ -28,6 +31,7 @@
       "sets": "3",
       "reps": "8-12",
       "weighted": true,
+      "equipment": "machine",
       "description": "Wide grip lat pulldown. Pull bar to upper chest, squeeze lats at the bottom of the movement."
     },
     {
@@ -35,6 +39,7 @@
       "sets": "3",
       "reps": "8-12",
       "weighted": true,
+      "equipment": "dumbbell",
       "description": "Dumbbell bicep curls. Keep elbows pinned to sides, full range of motion, control the eccentric."
     },
     {
@@ -42,6 +47,7 @@
       "sets": "3",
       "reps": "8-12",
       "weighted": true,
+      "equipment": "machine",
       "description": "Cable seated row. Pull to lower chest, drive elbows back past body, squeeze shoulder blades together."
     }
   ],
@@ -51,6 +57,7 @@
       "sets": "3",
       "reps": "8-12",
       "weighted": true,
+      "equipment": "machine",
       "description": "Machine leg press. Full depth without knees caving, don't lock out at the top."
     },
     {
@@ -58,6 +65,7 @@
       "sets": "3",
       "reps": "10-12",
       "weighted": true,
+      "equipment": "machine",
       "description": "Machine leg extension. Slow eccentric, pause and squeeze quad at full extension."
     },
     {
@@ -65,6 +73,7 @@
       "sets": "3",
       "reps": "10-12",
       "weighted": true,
+      "equipment": "machine",
       "description": "Machine leg curl. Curl through full range of motion, control the return."
     },
     {
@@ -72,7 +81,8 @@
       "sets": "3",
       "reps": "12-15",
       "weighted": true,
-      "description": "Standing or seated calf raise. Full range — pause and stretch at the bottom, squeeze at the top."
+      "equipment": "machine",
+      "description": "Standing or seated calf raise. Full range \u2014 pause and stretch at the bottom, squeeze at the top."
     }
   ],
   "Core": [
@@ -81,6 +91,7 @@
       "sets": "3",
       "reps": "15-30",
       "weighted": false,
+      "equipment": "bodyweight",
       "description": "Standard crunches. Focus on contracting abs each rep, avoid pulling on your neck."
     }
   ]
