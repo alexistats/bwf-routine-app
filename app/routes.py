@@ -3,15 +3,19 @@ from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import User, Workout, ExerciseLog, UserProgression
 from app import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 main = Blueprint('main', __name__)
+
+MIN_PASSWORD_LENGTH = 8
+MAX_GYM_SETS = 10
 
 
 @main.route('/')
 def home():
     routine = request.args.get('routine', 'bwf')
-    session['current_routine_view'] = routine
+    if current_user.is_authenticated:
+        session['current_routine_view'] = routine
 
     if routine == 'gym':
         routine_data = current_app.config['GYM_ROUTINE_DATA']
@@ -50,6 +54,10 @@ def register():
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
+
+        if not password or len(password) < MIN_PASSWORD_LENGTH:
+            flash(f'Password must be at least {MIN_PASSWORD_LENGTH} characters.')
+            return redirect(url_for('main.register'))
 
         if User.query.filter_by(username=username).first():
             flash('Username already exists')
@@ -90,42 +98,45 @@ def logout():
 @main.route('/exercise/<section>/<int:index>')
 def exercise(section, index):
     routine = request.args.get('routine', 'bwf')
-
     if routine == 'gym':
-        routine_data = current_app.config['GYM_ROUTINE_DATA']
-        exercise_obj = routine_data[section][index]
+        return _gym_exercise_view(section, index)
+    return _bwf_exercise_view(section, index)
 
-        last_log = None
-        if current_user.is_authenticated:
-            last_log = (
-                ExerciseLog.query
-                .join(Workout)
-                .filter(
-                    Workout.user_id == current_user.id,
-                    ExerciseLog.exercise_name == exercise_obj['name']
-                )
-                .order_by(ExerciseLog.id.desc())
-                .first()
+
+def _gym_exercise_view(section, index):
+    routine_data = current_app.config['GYM_ROUTINE_DATA']
+    exercise_obj = routine_data[section][index]
+
+    last_log = None
+    if current_user.is_authenticated:
+        last_log = (
+            ExerciseLog.query
+            .join(Workout)
+            .filter(
+                Workout.user_id == current_user.id,
+                ExerciseLog.exercise_name == exercise_obj['name']
             )
-
-        return render_template(
-            'exercise.html',
-            exercise=exercise_obj,
-            section=section,
-            routine=routine,
-            rest_period=120,
-            last_log=last_log,
-            progression_data=None,
-            user_progression=None
+            .order_by(ExerciseLog.id.desc())
+            .first()
         )
 
-    # BWF
+    return render_template(
+        'exercise.html',
+        exercise=exercise_obj,
+        section=section,
+        routine='gym',
+        rest_period=120,
+        last_log=last_log,
+        progression_data=None,
+        user_progression=None
+    )
+
+
+def _bwf_exercise_view(section, index):
     routine_data = current_app.config['ROUTINE_DATA']
     exercise_obj = routine_data[section][index]
 
-    rest_period = 90
-    if section == 'Core Triplet':
-        rest_period = 60
+    rest_period = 60 if section == 'Core Triplet' else 90
 
     progression_data = None
     if exercise_obj['name'].endswith('Progression'):
@@ -142,7 +153,7 @@ def exercise(section, index):
         'exercise.html',
         exercise=exercise_obj,
         section=section,
-        routine=routine,
+        routine='bwf',
         rest_period=rest_period,
         last_log=None,
         progression_data=progression_data,
@@ -171,7 +182,7 @@ def end_workout():
     if 'current_workout_id' in session:
         workout_id = session.pop('current_workout_id')
         routine_type = session.pop('current_routine_type', 'bwf')
-        workout = Workout.query.get(workout_id)
+        workout = db.session.get(Workout, workout_id)
 
         if workout and workout.exercises.count() == 0:
             db.session.delete(workout)
@@ -198,80 +209,104 @@ def log_exercise(exercise_name):
     index = request.form.get('index')
 
     if routine == 'gym':
-        weight_unit = request.form.get('weight_unit', 'lbs')
-        sets_completed = 0
-        weights_list = []
-        reps_list = []
-
-        for i in range(1, 4):
-            reps_str = request.form.get(f'reps_set_{i}', '').strip()
-            weight_str = request.form.get(f'weight_set_{i}', '').strip()
-            if reps_str:
-                sets_completed += 1
-                reps_list.append(reps_str)
-                weights_list.append(weight_str if weight_str else '0')
-
-        if sets_completed == 0:
-            flash('Please fill in at least one set.')
-            return redirect(url_for('main.exercise', section=section, index=index, routine=routine))
-
-        has_weights = any(w not in ('', '0') for w in weights_list)
-
-        exercise_log = ExerciseLog(
-            exercise_name=exercise_name,
-            sets_completed=sets_completed,
-            reps_per_set=','.join(reps_list),
-            weight_per_set=','.join(weights_list) if has_weights else None,
-            weight_unit=weight_unit if has_weights else None,
-            progression_level=None,
-            notes=request.form.get('notes', ''),
-            workout_id=workout_id
-        )
-        db.session.add(exercise_log)
-        db.session.commit()
-        flash('Exercise logged!')
-
+        _log_gym_exercise(exercise_name, workout_id)
     else:
-        # BWF
-        progression_level = request.form.get('progression_level', type=int)
-        sets_completed = request.form.get('sets_completed', type=int)
-
-        reps_list = []
-        for i in range(1, sets_completed + 1):
-            reps = request.form.get(f'reps_set_{i}', type=int)
-            if reps:
-                reps_list.append(str(reps))
-
-        exercise_log = ExerciseLog(
-            exercise_name=exercise_name,
-            sets_completed=sets_completed,
-            reps_per_set=','.join(reps_list),
-            progression_level=progression_level,
-            notes=request.form.get('notes', ''),
-            workout_id=workout_id
-        )
-        db.session.add(exercise_log)
-
-        if exercise_name.endswith('Progression') and all(int(r) >= 8 for r in reps_list) and len(reps_list) >= 3:
-            user_progression = UserProgression.query.filter_by(
-                user_id=current_user.id,
-                exercise_category=exercise_name
-            ).first()
-
-            if user_progression:
-                progression_data = current_app.config['PROGRESSION_DATA'].get(exercise_name, [])
-                max_level = len(progression_data)
-
-                if user_progression.current_progression < max_level:
-                    user_progression.current_progression += 1
-                    user_progression.current_reps = 5
-                    user_progression.last_updated = datetime.utcnow()
-                    flash(f'Congratulations! You advanced to: {progression_data[user_progression.current_progression - 1]["name"]}')
-
-        db.session.commit()
-        flash('Exercise logged successfully!')
+        _log_bwf_exercise(exercise_name, workout_id)
 
     return redirect(url_for('main.exercise', section=section, index=index, routine=routine))
+
+
+def parse_gym_sets(form):
+    """Collect (weight, reps) pairs from numbered form fields.
+
+    Sets count as completed when reps are filled in; weight is optional
+    so bodyweight exercises (e.g. crunches) log cleanly.
+    """
+    weights, reps = [], []
+    for i in range(1, MAX_GYM_SETS + 1):
+        reps_str = form.get(f'reps_set_{i}', '').strip()
+        weight_str = form.get(f'weight_set_{i}', '').strip()
+        if reps_str:
+            reps.append(reps_str)
+            weights.append(weight_str if weight_str else '0')
+    return weights, reps
+
+
+def _log_gym_exercise(exercise_name, workout_id):
+    weights, reps = parse_gym_sets(request.form)
+
+    if not reps:
+        flash('Please fill in at least one set.')
+        return
+
+    has_weights = any(w not in ('', '0') for w in weights)
+    weight_unit = request.form.get('weight_unit', 'lbs')
+
+    exercise_log = ExerciseLog(
+        exercise_name=exercise_name,
+        sets_completed=len(reps),
+        reps_per_set=','.join(reps),
+        weight_per_set=','.join(weights) if has_weights else None,
+        weight_unit=weight_unit if has_weights else None,
+        progression_level=None,
+        notes=request.form.get('notes', ''),
+        workout_id=workout_id
+    )
+    db.session.add(exercise_log)
+    db.session.commit()
+    flash('Exercise logged!')
+
+
+def _log_bwf_exercise(exercise_name, workout_id):
+    progression_level = request.form.get('progression_level', type=int)
+    sets_completed = request.form.get('sets_completed', type=int) or 0
+
+    reps_list = []
+    for i in range(1, sets_completed + 1):
+        reps = request.form.get(f'reps_set_{i}', type=int)
+        if reps:
+            reps_list.append(str(reps))
+
+    exercise_log = ExerciseLog(
+        exercise_name=exercise_name,
+        sets_completed=sets_completed,
+        reps_per_set=','.join(reps_list),
+        progression_level=progression_level,
+        notes=request.form.get('notes', ''),
+        workout_id=workout_id
+    )
+    db.session.add(exercise_log)
+
+    maybe_advance_progression(current_user, exercise_name, reps_list)
+
+    db.session.commit()
+    flash('Exercise logged successfully!')
+
+
+def maybe_advance_progression(user, exercise_name, reps_list):
+    """Advance the user to the next progression level after hitting
+    3+ sets of 8+ reps, resetting the rep target to 5."""
+    if not exercise_name.endswith('Progression'):
+        return
+    if len(reps_list) < 3 or not all(int(r) >= 8 for r in reps_list):
+        return
+
+    user_progression = UserProgression.query.filter_by(
+        user_id=user.id,
+        exercise_category=exercise_name
+    ).first()
+    if not user_progression:
+        return
+
+    progression_data = current_app.config['PROGRESSION_DATA'].get(exercise_name, [])
+    max_level = len(progression_data)
+
+    if user_progression.current_progression < max_level:
+        user_progression.current_progression += 1
+        user_progression.current_reps = 5
+        user_progression.last_updated = datetime.now(timezone.utc)
+        next_name = progression_data[user_progression.current_progression - 1]['name']
+        flash(f'Congratulations! You advanced to: {next_name}')
 
 
 @main.route('/progress')
@@ -292,7 +327,10 @@ def progress():
 @main.route('/workout/<int:workout_id>')
 @login_required
 def view_workout(workout_id):
-    workout = Workout.query.get_or_404(workout_id)
+    workout = db.session.get(Workout, workout_id)
+    if workout is None:
+        flash('Workout not found.')
+        return redirect(url_for('main.progress'))
 
     if workout.user_id != current_user.id:
         flash('You do not have permission to view this workout.')
