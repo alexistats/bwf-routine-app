@@ -2,7 +2,7 @@
 {% block title %}{{ exercise.name }}{% endblock %}
 {% block content %}
 <div class="exercise-detail">
-    <a href="{{ url_for('main.home') }}" class="back-button">&larr; Back to Routine</a>
+    <a href="{{ url_for('main.home', routine=routine) }}" class="back-button">&larr; Back to Routine</a>
     <h2>{{ exercise.name }}</h2>
 
     <div class="exercise-info">
@@ -27,7 +27,99 @@
         <p>{{ exercise.description }}</p>
     </div>
 
-    {% if progression_data and user_progression %}
+    {# ── GYM exercise logging form ── #}
+    {% if exercise.get('weighted') is not none and routine == 'gym' %}
+
+        {% if current_user.is_authenticated %}
+            {% if not session.get('current_workout_id') %}
+            <div class="log-exercise-form">
+                <p class="no-workout-msg">Start a workout to log this exercise.</p>
+                <a href="{{ url_for('main.start_workout', routine_type='gym') }}" class="btn primary">Start Gym Workout</a>
+            </div>
+            {% else %}
+
+            {% set last_weights = last_log.weight_per_set.split(',') if last_log and last_log.weight_per_set else [] %}
+            {% set last_reps = last_log.reps_per_set.split(',') if last_log and last_log.reps_per_set else [] %}
+            {% set last_unit = last_log.weight_unit if last_log and last_log.weight_unit else 'lbs' %}
+
+            <div class="log-exercise-form">
+                <h3>Log This Exercise</h3>
+
+                {% if last_log %}
+                <div class="last-session-summary">
+                    <span class="last-session-label">Last session:</span>
+                    {% for i in range([last_weights|length, last_reps|length]|min if last_weights else last_reps|length) %}
+                    <span class="last-set-badge"
+                          data-lbs-value="{{ last_weights[i] if last_weights and i < last_weights|length else '' }}"
+                          data-stored-unit="{{ last_unit }}">
+                        {% if last_weights and i < last_weights|length and last_weights[i] != '0' %}
+                        <span class="last-weight-display">{{ last_weights[i] }}</span>
+                        <span class="last-unit-label">{{ last_unit }}</span> ×
+                        {% endif %}
+                        {{ last_reps[i] if i < last_reps|length else '' }} reps
+                    </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if exercise.weighted %}
+                <div class="unit-toggle">
+                    <span class="unit-toggle-label">Unit:</span>
+                    <button type="button" id="btn-lbs" class="unit-toggle-btn" onclick="setUnit('lbs')">lbs</button>
+                    <button type="button" id="btn-kg" class="unit-toggle-btn" onclick="setUnit('kg')">kg</button>
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('main.log_exercise', exercise_name=exercise.name) }}">
+                    <input type="hidden" name="section" value="{{ section }}">
+                    <input type="hidden" name="index" value="{{ request.view_args.index }}">
+                    <input type="hidden" name="routine" value="{{ routine }}">
+                    <input type="hidden" name="weight_unit" id="weight-unit-input" value="lbs">
+
+                    {% for i in range(1, 4) %}
+                    <div class="set-row">
+                        <span class="set-label">Set {{ i }}</span>
+                        <div class="set-inputs">
+                            {% if exercise.weighted %}
+                            <div class="form-group">
+                                <label>Weight (<span class="unit-display">lbs</span>)</label>
+                                <input type="number"
+                                       class="weight-input"
+                                       name="weight_set_{{ i }}"
+                                       id="weight_set_{{ i }}"
+                                       step="0.5" min="0"
+                                       data-stored-value="{{ last_weights[i-1] if last_weights|length >= i else '' }}"
+                                       data-stored-unit="{{ last_unit }}"
+                                       value="{{ last_weights[i-1] if last_weights|length >= i else '' }}">
+                            </div>
+                            {% endif %}
+                            <div class="form-group">
+                                <label>Reps</label>
+                                <input type="number"
+                                       name="reps_set_{{ i }}"
+                                       id="reps_set_{{ i }}"
+                                       min="1" max="100"
+                                       value="{{ last_reps[i-1] if last_reps|length >= i else '' }}">
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" name="notes" rows="2"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn primary">Log Exercise</button>
+                </form>
+            </div>
+            {% endif %}
+        {% else %}
+        <p class="login-prompt"><a href="{{ url_for('main.login') }}">Log in</a> to track your progress.</p>
+        {% endif %}
+
+    {# ── BWF progression logging form ── #}
+    {% elif progression_data and user_progression %}
     <div class="progression-section">
         <h3>Your Current Progression</h3>
         {% set current_level = user_progression.current_progression %}
@@ -46,6 +138,7 @@
             <form method="POST" action="{{ url_for('main.log_exercise', exercise_name=exercise.name) }}">
                 <input type="hidden" name="section" value="{{ section }}">
                 <input type="hidden" name="index" value="{{ request.view_args.index }}">
+                <input type="hidden" name="routine" value="{{ routine }}">
                 <input type="hidden" name="progression_level" value="{{ current_level }}">
 
                 <div class="form-group">
@@ -100,113 +193,143 @@
 
 {% block extra_js %}
 <script>
-    // Timer functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const timerDisplay = document.querySelector('.timer-display');
-        const startBtn = document.getElementById('timer-start');
-        const resetBtn = document.getElementById('timer-reset');
-        const timer60Btn = document.getElementById('timer-60');
-        const timer90Btn = document.getElementById('timer-90');
-        const timer120Btn = document.getElementById('timer-120');
+document.addEventListener('DOMContentLoaded', function() {
 
-        let countdown;
-        let timeLeft = {{ rest_period or 90 }};
-        let isRunning = false;
+    // ── Rest Timer ──────────────────────────────────────────────
+    const timerDisplay = document.querySelector('.timer-display');
+    const startBtn = document.getElementById('timer-start');
+    const resetBtn = document.getElementById('timer-reset');
 
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
+    let countdown;
+    let timeLeft = {{ rest_period or 90 }};
+    let isRunning = false;
 
-        function startTimer() {
-            if (isRunning) return;
-            isRunning = true;
-            startBtn.textContent = 'Pause';
-            countdown = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    timerDisplay.textContent = 'DONE!';
-                    startBtn.textContent = 'Start';
-                    isRunning = false;
-                    // Play sound or vibrate
-                    if ('vibrate' in navigator) {
-                        navigator.vibrate([200, 100, 200]);
-                    }
-                }
-            }, 1000);
-        }
+    function updateTimerDisplay() {
+        const m = Math.floor(timeLeft / 60);
+        const s = timeLeft % 60;
+        timerDisplay.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
 
-        function pauseTimer() {
+    function startTimer() {
+        if (isRunning) return;
+        isRunning = true;
+        startBtn.textContent = 'Pause';
+        countdown = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerDisplay.textContent = 'DONE!';
+                startBtn.textContent = 'Start';
+                isRunning = false;
+                if ('vibrate' in navigator) navigator.vibrate([200, 100, 200]);
+            }
+        }, 1000);
+    }
+
+    startBtn.addEventListener('click', function() {
+        if (isRunning) {
             clearInterval(countdown);
             isRunning = false;
             startBtn.textContent = 'Resume';
+        } else {
+            startTimer();
         }
+    });
 
-        function resetTimer() {
-            clearInterval(countdown);
-            isRunning = false;
-            startBtn.textContent = 'Start';
-            timeLeft = {{ rest_period or 90 }};
-            updateTimerDisplay();
-        }
-
-        startBtn.addEventListener('click', function() {
-            if (isRunning) {
-                pauseTimer();
-            } else {
-                startTimer();
-            }
-        });
-
-        resetBtn.addEventListener('click', resetTimer);
-
-        timer60Btn.addEventListener('click', function() {
-            timeLeft = 60;
-            updateTimerDisplay();
-        });
-
-        timer90Btn.addEventListener('click', function() {
-            timeLeft = 90;
-            updateTimerDisplay();
-        });
-
-        timer120Btn.addEventListener('click', function() {
-            timeLeft = 120;
-            updateTimerDisplay();
-        });
-
-        // Initialize timer display
+    resetBtn.addEventListener('click', function() {
+        clearInterval(countdown);
+        isRunning = false;
+        startBtn.textContent = 'Start';
+        timeLeft = {{ rest_period or 90 }};
         updateTimerDisplay();
     });
 
-    // Function to update rep inputs based on sets selected
-    function updateRepInputs(sets) {
-        const repInputs = document.getElementById('rep-inputs');
-        repInputs.innerHTML = '';
+    document.getElementById('timer-60') && document.getElementById('timer-60').addEventListener('click', () => { timeLeft = 60; updateTimerDisplay(); });
+    document.getElementById('timer-90') && document.getElementById('timer-90').addEventListener('click', () => { timeLeft = 90; updateTimerDisplay(); });
+    document.getElementById('timer-120') && document.getElementById('timer-120').addEventListener('click', () => { timeLeft = 120; updateTimerDisplay(); });
 
+    updateTimerDisplay();
+
+    // ── BWF reps dynamic inputs ──────────────────────────────────
+    window.updateRepInputs = function(sets) {
+        const container = document.getElementById('rep-inputs');
+        if (!container) return;
+        container.innerHTML = '';
         for (let i = 1; i <= sets; i++) {
-            const div = document.createElement('div');
-            div.className = 'form-group';
-
-            const label = document.createElement('label');
-            label.setAttribute('for', `reps_set_${i}`);
-            label.textContent = `Reps (Set ${i})`;
-
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.id = `reps_set_${i}`;
-            input.name = `reps_set_${i}`;
-            input.min = '1';
-            input.max = '20';
-            input.value = '{{ user_progression.current_reps if user_progression else 5 }}';
-
-            div.appendChild(label);
-            div.appendChild(input);
-            repInputs.appendChild(div);
+            container.innerHTML += `
+                <div class="form-group">
+                    <label for="reps_set_${i}">Reps (Set ${i})</label>
+                    <input type="number" id="reps_set_${i}" name="reps_set_${i}" min="1" max="20" value="5">
+                </div>`;
         }
+    };
+
+    // ── Gym kg/lbs toggle ────────────────────────────────────────
+    const unitInput = document.getElementById('weight-unit-input');
+    if (!unitInput) return; // not a weighted gym exercise
+
+    let currentUnit = localStorage.getItem('weightUnit') || 'lbs';
+
+    function convertWeight(value, from, to) {
+        if (from === to) return value;
+        return from === 'lbs' ? value * 0.453592 : value * 2.20462;
     }
+
+    function roundWeight(value) {
+        // Round to nearest 0.5
+        return Math.round(value * 2) / 2;
+    }
+
+    window.setUnit = function(unit) {
+        if (unit === currentUnit) return;
+
+        document.querySelectorAll('.weight-input').forEach(function(input) {
+            const v = parseFloat(input.value);
+            if (!isNaN(v) && v > 0) {
+                input.value = roundWeight(convertWeight(v, currentUnit, unit));
+            }
+        });
+
+        currentUnit = unit;
+        localStorage.setItem('weightUnit', currentUnit);
+        applyUnitUI();
+    };
+
+    function applyUnitUI() {
+        unitInput.value = currentUnit;
+
+        document.querySelectorAll('.unit-display').forEach(el => el.textContent = currentUnit);
+
+        const btnLbs = document.getElementById('btn-lbs');
+        const btnKg = document.getElementById('btn-kg');
+        if (btnLbs) btnLbs.classList.toggle('active', currentUnit === 'lbs');
+        if (btnKg) btnKg.classList.toggle('active', currentUnit === 'kg');
+
+        // Update last-session badges
+        document.querySelectorAll('.last-set-badge').forEach(function(badge) {
+            const storedUnit = badge.dataset.storedUnit || 'lbs';
+            const weightDisplay = badge.querySelector('.last-weight-display');
+            const unitLabel = badge.querySelector('.last-unit-label');
+            if (!weightDisplay || !unitLabel) return;
+            const rawValue = parseFloat(badge.dataset.lbsValue);
+            if (isNaN(rawValue)) return;
+            const converted = roundWeight(convertWeight(rawValue, storedUnit, currentUnit));
+            weightDisplay.textContent = converted;
+            unitLabel.textContent = currentUnit;
+        });
+    }
+
+    // On load: convert pre-filled weights to current unit preference
+    document.querySelectorAll('.weight-input').forEach(function(input) {
+        const storedValue = parseFloat(input.dataset.storedValue);
+        const storedUnit = input.dataset.storedUnit || 'lbs';
+        if (!isNaN(storedValue) && storedValue > 0) {
+            input.value = roundWeight(convertWeight(storedValue, storedUnit, currentUnit));
+        }
+    });
+
+    applyUnitUI();
+});
 </script>
 {% endblock %}

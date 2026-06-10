@@ -1,0 +1,87 @@
+{
+  "Push": [
+    {
+      "name": "Bench Press",
+      "sets": "3",
+      "reps": "8-12",
+      "weighted": true,
+      "description": "Barbell bench press. Lower to mid-chest with control, press back up without locking out."
+    },
+    {
+      "name": "Shoulder Press",
+      "sets": "3",
+      "reps": "8-12",
+      "weighted": true,
+      "description": "Dumbbell shoulder press. Keep core tight, press overhead without arching the lower back."
+    },
+    {
+      "name": "Tricep Rope",
+      "sets": "3",
+      "reps": "10-12",
+      "weighted": true,
+      "description": "Cable tricep pushdown with rope. Keep elbows pinned at sides, extend fully and spread rope at the bottom."
+    }
+  ],
+  "Pull": [
+    {
+      "name": "Lat Pull Down",
+      "sets": "3",
+      "reps": "8-12",
+      "weighted": true,
+      "description": "Wide grip lat pulldown. Pull bar to upper chest, squeeze lats at the bottom of the movement."
+    },
+    {
+      "name": "Bicep Curls",
+      "sets": "3",
+      "reps": "8-12",
+      "weighted": true,
+      "description": "Dumbbell bicep curls. Keep elbows pinned to sides, full range of motion, control the eccentric."
+    },
+    {
+      "name": "Seated Rows",
+      "sets": "3",
+      "reps": "8-12",
+      "weighted": true,
+      "description": "Cable seated row. Pull to lower chest, drive elbows back past body, squeeze shoulder blades together."
+    }
+  ],
+  "Legs": [
+    {
+      "name": "Leg Press",
+      "sets": "3",
+      "reps": "8-12",
+      "weighted": true,
+      "description": "Machine leg press. Full depth without knees caving, don't lock out at the top."
+    },
+    {
+      "name": "Leg Extension",
+      "sets": "3",
+      "reps": "10-12",
+      "weighted": true,
+      "description": "Machine leg extension. Slow eccentric, pause and squeeze quad at full extension."
+    },
+    {
+      "name": "Leg Curl",
+      "sets": "3",
+      "reps": "10-12",
+      "weighted": true,
+      "description": "Machine leg curl. Curl through full range of motion, control the return."
+    },
+    {
+      "name": "Calf Raise",
+      "sets": "3",
+      "reps": "12-15",
+      "weighted": true,
+      "description": "Standing or seated calf raise. Full range — pause and stretch at the bottom, squeeze at the top."
+    }
+  ],
+  "Core": [
+    {
+      "name": "Crunches",
+      "sets": "3",
+      "reps": "15-30",
+      "weighted": false,
+      "description": "Standard crunches. Focus on contracting abs each rep, avoid pulling on your neck."
+    }
+  ]
+}

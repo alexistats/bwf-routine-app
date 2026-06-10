@@ -21,6 +21,7 @@ class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    routine_type = db.Column(db.String(20), default='bwf')
     exercises = db.relationship('ExerciseLog', backref='workout', lazy='dynamic')
 
     def formatted_date(self):
@@ -31,13 +32,22 @@ class ExerciseLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     exercise_name = db.Column(db.String(100))
     sets_completed = db.Column(db.Integer)
-    reps_per_set = db.Column(db.String(50))  # Store as comma-separated values
-    progression_level = db.Column(db.Integer)
+    reps_per_set = db.Column(db.String(100))  # comma-separated
+    weight_per_set = db.Column(db.String(200), nullable=True)  # comma-separated, gym only
+    weight_unit = db.Column(db.String(5), nullable=True)  # 'lbs' or 'kg'
+    progression_level = db.Column(db.Integer, nullable=True)
     notes = db.Column(db.Text)
     workout_id = db.Column(db.Integer, db.ForeignKey('workout.id'))
 
     def get_reps_list(self):
-        return [int(rep) for rep in self.reps_per_set.split(',')]
+        if not self.reps_per_set:
+            return []
+        return [int(r) for r in self.reps_per_set.split(',') if r]
+
+    def get_weights_list(self):
+        if not self.weight_per_set:
+            return []
+        return [float(w) for w in self.weight_per_set.split(',') if w]
 
 
 class UserProgression(db.Model):

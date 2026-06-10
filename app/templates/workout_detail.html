@@ -5,31 +5,57 @@
     <a href="{{ url_for('main.progress') }}" class="back-button">&larr; Back to Progress</a>
 
     <h2>Workout on {{ workout.formatted_date() }}</h2>
+    {% if workout.routine_type == 'gym' %}
+    <span class="routine-badge gym">Gym Routine</span>
+    {% else %}
+    <span class="routine-badge bwf">BWF Routine</span>
+    {% endif %}
 
     <div class="exercise-logs">
         {% for log in exercise_logs %}
-            <div class="exercise-log-card">
-                <h3>{{ log.exercise_name }}</h3>
+        <div class="exercise-log-card">
+            <h3>{{ log.exercise_name }}</h3>
 
-                {% if log.exercise_name.endswith('Progression') %}
-                    {% set category = log.exercise_name %}
-                    {% set prog_data = progression_data[category] %}
-                    {% set exercise = prog_data|selectattr('level', 'eq', log.progression_level)|first %}
-                    <p class="progression-name">{{ exercise.name }}</p>
+            {% if log.exercise_name.endswith('Progression') and progression_data.get(log.exercise_name) %}
+                {% set prog_data = progression_data[log.exercise_name] %}
+                {% set prog_exercise = prog_data|selectattr('level', 'eq', log.progression_level)|first %}
+                {% if prog_exercise %}
+                <p class="progression-name">{{ prog_exercise.name }}</p>
                 {% endif %}
+            {% endif %}
 
+            {% if log.weight_per_set %}
+                {# Gym exercise — show per-set breakdown #}
+                {% set weights = log.weight_per_set.split(',') %}
+                {% set reps = log.reps_per_set.split(',') %}
+                {% set unit = log.weight_unit or 'lbs' %}
+                <div class="sets-detail">
+                    {% for i in range(log.sets_completed) %}
+                    <div class="set-detail-row">
+                        <span class="set-num">Set {{ i + 1 }}</span>
+                        {% if i < weights|length and weights[i] != '0' %}
+                        <span class="set-weight">{{ weights[i] }} {{ unit }}</span>
+                        <span class="set-x">×</span>
+                        {% endif %}
+                        <span class="set-reps">{{ reps[i] if i < reps|length else '—' }} reps</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {# BWF / bodyweight exercise #}
                 <div class="sets-reps">
                     <p><strong>Sets:</strong> {{ log.sets_completed }}</p>
                     <p><strong>Reps per set:</strong> {{ log.reps_per_set }}</p>
                 </div>
+            {% endif %}
 
-                {% if log.notes %}
-                <div class="notes">
-                    <h4>Notes:</h4>
-                    <p>{{ log.notes }}</p>
-                </div>
-                {% endif %}
+            {% if log.notes %}
+            <div class="notes">
+                <h4>Notes:</h4>
+                <p>{{ log.notes }}</p>
             </div>
+            {% endif %}
+        </div>
         {% endfor %}
     </div>
 </div>
