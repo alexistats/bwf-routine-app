@@ -54,6 +54,39 @@ class ExerciseLog(db.Model):
         return [float(w) for w in self.weight_per_set.split(',') if w]
 
 
+class CustomExercise(db.Model):
+    """A user-added exercise overlaid on the built-in routine."""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    routine_type = db.Column(db.String(20), default='gym')
+    section = db.Column(db.String(50))
+    name = db.Column(db.String(100))
+    sets = db.Column(db.Integer, default=3)
+    reps = db.Column(db.String(20), default='8-12')
+    weighted = db.Column(db.Boolean, default=True)
+    equipment = db.Column(db.String(20), default='machine')
+    description = db.Column(db.Text, default='')
+
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'sets': str(self.sets),
+            'reps': self.reps,
+            'weighted': self.weighted,
+            'equipment': self.equipment,
+            'description': self.description or '',
+            'custom': True,
+        }
+
+
+class HiddenExercise(db.Model):
+    """A built-in exercise the user removed from their routine view."""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    routine_type = db.Column(db.String(20), default='gym')
+    exercise_name = db.Column(db.String(100))
+
+
 class UserProgression(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

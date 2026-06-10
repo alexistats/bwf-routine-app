@@ -19,6 +19,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const DB_LBS = [5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80];
     const DB_KG  = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 35, 37.5, 40];
     const PLATE_COLORS = ['#c0392b', '#2962a8', '#f1c40f', '#27ae60', '#7f8c8d', '#bdc3c7'];
+    // Mirrors the Jinja equipment_icon macro in _macros.html
+    const EQ_ICONS = {
+        barbell: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="1" y="11" width="22" height="2" rx="1"/><rect x="4.5" y="7.5" width="2.4" height="9" rx="1"/><rect x="7.6" y="5.5" width="2.4" height="13" rx="1"/><rect x="17.1" y="7.5" width="2.4" height="9" rx="1"/><rect x="14" y="5.5" width="2.4" height="13" rx="1"/></svg>',
+        dumbbell: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="8" y="11" width="8" height="2" rx="1"/><rect x="4" y="7" width="3" height="10" rx="1.2"/><rect x="17" y="7" width="3" height="10" rx="1.2"/><rect x="1.5" y="9" width="2" height="6" rx="1"/><rect x="20.5" y="9" width="2" height="6" rx="1"/></svg>',
+        machine: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="5" width="12" height="3.2" rx="1"/><rect x="6" y="9.4" width="12" height="3.2" rx="1"/><rect x="6" y="13.8" width="12" height="3.2" rx="1"/><rect x="6" y="18.2" width="12" height="3.2" rx="1"/><rect x="11" y="1" width="2" height="5" rx="1"/></svg>',
+    };
 
     // ── Unit state ─────────────────────────────────────────────────
     let currentUnit = localStorage.getItem('weightUnit') || 'lbs';
@@ -31,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let openCardId = null;
 
     document.addEventListener('click', function (e) {
+        if (e.target.closest('.remove-exercise-form')) return;
         const header = e.target.closest('.exercise-card-header');
         if (!header) return;
         if (header.dataset.card) toggleCard(header.dataset.card);
@@ -75,6 +82,60 @@ document.addEventListener('DOMContentLoaded', function () {
         const icon = h.querySelector('.expand-icon');
         if (icon) icon.classList.toggle('open', open);
     }
+
+    // ── Routine edit mode ──────────────────────────────────────────
+    const editToggle = document.getElementById('edit-routine-toggle');
+    if (editToggle) {
+        editToggle.addEventListener('click', function () {
+            const container = document.querySelector('.routine-container');
+            const on = container.classList.toggle('edit-mode');
+            editToggle.classList.toggle('active', on);
+            editToggle.textContent = on ? '✓ Done' : '✎ Edit';
+        });
+    }
+
+    document.addEventListener('click', function (e) {
+        const t = e.target.closest('.add-exercise-toggle');
+        if (!t) return;
+        const box = t.parentElement.querySelector('.add-exercise-box');
+        if (box) box.hidden = !box.hidden;
+    });
+
+    // ── Add / remove sets ──────────────────────────────────────────
+    document.addEventListener('click', function (e) {
+        const addBtn = e.target.closest('[data-add-set]');
+        const remBtn = e.target.closest('[data-remove-set]');
+        if (!addBtn && !remBtn) return;
+
+        const form = e.target.closest('form');
+        const rows = form && form.querySelector('.set-rows');
+        if (!rows) return;
+        const count = rows.children.length;
+
+        if (remBtn) {
+            if (count > 1) rows.lastElementChild.remove();
+        } else {
+            if (count >= 10) return;
+            const i = count + 1;
+            const weighted = rows.dataset.weighted === '1';
+            const defaultReps = rows.dataset.defaultReps || '';
+            const row = mkEl('div', 'set-row');
+            let html = '<span class="set-label">Set ' + i + '</span><div class="set-inputs">';
+            if (weighted) {
+                html += '<div class="form-group"><label>Weight (<span class="unit-display">' + currentUnit + '</span>)</label>' +
+                        '<input type="number" class="weight-input" name="weight_set_' + i + '" step="0.5" min="0"></div>';
+            }
+            html += '<div class="form-group"><label>Reps</label>' +
+                    '<input type="number" name="reps_set_' + i + '" min="1" max="100" value="' + defaultReps + '"></div></div>';
+            row.innerHTML = html;
+            rows.appendChild(row);
+        }
+
+        // Rebuild the picker so Fill/Load buttons match the new set count
+        const panel = form.closest('.exercise-panel');
+        const picker = panel && panel.querySelector('.weight-picker');
+        if (picker) buildPicker(picker);
+    });
 
     // ── AJAX form submit ───────────────────────────────────────────
     document.addEventListener('submit', function (e) {
@@ -207,9 +268,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // Header row
         const hdr = mkEl('div', 'picker-header');
         const title = mkEl('span', 'picker-title');
-        title.textContent = eq === 'barbell' ? 'Plate calculator'
-                          : eq === 'dumbbell' ? 'Dumbbell weight'
-                          : 'Quick fill';
+        const titleText = eq === 'barbell' ? 'Plate calculator'
+                        : eq === 'dumbbell' ? 'Dumbbell weight'
+                        : 'Quick fill';
+        title.innerHTML = (EQ_ICONS[eq] || '') + ' ' + titleText;
         hdr.appendChild(title);
         if (eq === 'barbell') {
             const tot = mkEl('span', 'picker-total');
@@ -234,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const b = mkEl('button', 'settings-opt-btn' + (t === eq ? ' active' : ''));
             b.type = 'button';
             b.dataset.setEquipment = t;
-            b.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+            b.innerHTML = (EQ_ICONS[t] || '') + ' ' + t.charAt(0).toUpperCase() + t.slice(1);
             eqRow.appendChild(b);
         });
         sp.appendChild(eqRow);

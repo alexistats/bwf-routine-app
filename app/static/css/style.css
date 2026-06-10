@@ -739,6 +739,189 @@ footer {
     font-size: 1rem;
 }
 
+/* ── Workout launcher ───────────────────────────────────────── */
+.workout-launcher {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.25rem 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.launcher-title {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.75rem;
+}
+
+.launcher-btn {
+    display: block;
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 1.1rem;
+    border-radius: 6px;
+}
+
+.launcher-hint {
+    margin-top: 0.6rem;
+    font-size: 0.78rem;
+    color: #999;
+}
+
+/* ── Routine edit mode ──────────────────────────────────────── */
+.edit-routine-btn {
+    margin-left: auto;
+    background: none;
+    border: 1px solid #c8d8e8;
+    color: #4a76a8;
+    border-radius: 4px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    align-self: center;
+    margin-bottom: 2px;
+}
+
+.edit-routine-btn.active {
+    background-color: #4a76a8;
+    color: white;
+}
+
+/* edit-only elements appear only while edit mode is on */
+.edit-only {
+    display: none;
+}
+
+.routine-container.edit-mode .edit-only {
+    display: block;
+}
+
+.remove-exercise-form {
+    margin-left: 0.5rem;
+}
+.routine-container.edit-mode .remove-exercise-form {
+    display: inline-block;
+}
+
+.remove-exercise-btn {
+    background-color: #fdecea;
+    border: 1px solid #f5b7b1;
+    color: #c0392b;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.restore-form {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.restore-btn {
+    background: none;
+    border: 1px dashed #c8d8e8;
+    color: #4a76a8;
+    border-radius: 4px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.add-exercise-wrap {
+    margin-top: 0.25rem;
+}
+
+.add-exercise-toggle {
+    width: 100%;
+    background: none;
+    border: 1px dashed #b8c8d8;
+    color: #4a76a8;
+    border-radius: 5px;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.add-exercise-box {
+    background-color: white;
+    border: 1px solid #e0e6ec;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+}
+
+.add-ex-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.add-ex-sets { width: 64px; }
+.add-ex-reps { width: 90px; }
+
+.add-ex-row input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* ── Equipment icons & badges ───────────────────────────────── */
+.eq-icon {
+    display: inline-flex;
+    align-items: center;
+    color: #4a76a8;
+}
+
+.eq-icon svg { display: block; }
+
+.picker-title svg,
+.settings-opt-btn svg {
+    vertical-align: -2px;
+}
+
+.custom-badge {
+    background-color: #fef5e7;
+    color: #b9770e;
+    font-size: 0.72rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* ── Set add/remove controls ────────────────────────────────── */
+.set-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin: 0.25rem 0 0.5rem;
+}
+
+.set-ctrl-btn {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #555;
+    border-radius: 4px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.set-ctrl-btn:active {
+    background-color: #e8e8e8;
+}
+
 /* ── Weight picker ──────────────────────────────────────────── */
 .weight-picker {
     background-color: white;

@@ -7,7 +7,10 @@ A mobile-friendly workout tracker built with Flask. Supports two routines:
 
 ## Features
 
+- **Quickstart** — the app opens to your last-used routine with a one-tap "Start Workout" button
 - **Workout sessions** — start a workout, log exercises as you go, end when done (empty workouts are discarded)
+- **Routine editing (Gym)** — add your own exercises (name, sets, reps, equipment) or remove built-in ones, right from the home page; removals are restorable
+- **Flexible sets** — add or remove sets on any logging form (1–10), for light days and crazy days alike
 - **Progression system (BWF)** — hit 3 sets of 8+ reps and the app advances you to the next exercise progression automatically
 - **Weight tracking (Gym)** — log weight × reps per set; your last session's numbers are pre-filled the next time
 - **kg/lbs toggle** — switch units on the fly for machines labelled differently; preference is remembered, conversions apply to inputs and your last-session summary

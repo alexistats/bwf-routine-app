@@ -116,6 +116,54 @@ def test_home_page_prefills_last_gym_log(logged_in_client):
     assert b'105' in resp.data
 
 
+def test_home_defaults_to_last_used_routine(logged_in_client):
+    client = logged_in_client
+    client.get('/start_workout?routine_type=gym')
+    client.get('/end_workout')
+
+    resp = client.get('/')  # no ?routine param
+    assert b'Bench Press' in resp.data
+
+
+def test_add_and_remove_custom_exercise(logged_in_client):
+    client = logged_in_client
+
+    resp = client.post('/routine/add_exercise', data={
+        'section': 'Push',
+        'name': 'Incline Press',
+        'sets': '4',
+        'reps': '8-10',
+        'equipment': 'dumbbell',
+    }, follow_redirects=True)
+    assert b'Incline Press' in resp.data
+    assert b'custom' in resp.data
+
+    resp = client.post('/routine/add_exercise', data={
+        'section': 'Push',
+        'name': 'Incline Press',
+        'equipment': 'dumbbell',
+    }, follow_redirects=True)
+    assert b'already in your routine' in resp.data
+
+    client.post('/routine/remove_exercise', data={'name': 'Incline Press'})
+    client.get('/?routine=gym')  # consume the "Removed ..." flash
+    resp = client.get('/?routine=gym')
+    assert b'Incline Press' not in resp.data
+
+
+def test_hide_and_restore_default_exercise(logged_in_client):
+    client = logged_in_client
+
+    client.post('/routine/remove_exercise', data={'name': 'Leg Curl'})
+    client.get('/?routine=gym')  # consume the "Removed ..." flash
+    resp = client.get('/?routine=gym')
+    assert b'Leg Curl' not in resp.data
+
+    client.post('/routine/restore_exercises', data={})
+    resp = client.get('/?routine=gym')
+    assert b'Leg Curl' in resp.data
+
+
 def test_weight_picker_on_all_weighted_exercises(logged_in_client):
     client = logged_in_client
     client.get('/start_workout?routine_type=gym')
