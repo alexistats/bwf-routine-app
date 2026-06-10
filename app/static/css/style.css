@@ -739,6 +739,572 @@ footer {
     font-size: 1rem;
 }
 
+/* ── Workout launcher ───────────────────────────────────────── */
+.workout-launcher {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.25rem 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.launcher-title {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.75rem;
+}
+
+.launcher-btn {
+    display: block;
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 1.1rem;
+    border-radius: 6px;
+}
+
+.launcher-hint {
+    margin-top: 0.6rem;
+    font-size: 0.78rem;
+    color: #999;
+}
+
+/* ── Routine edit mode ──────────────────────────────────────── */
+.edit-routine-btn {
+    margin-left: auto;
+    background: none;
+    border: 1px solid #c8d8e8;
+    color: #4a76a8;
+    border-radius: 4px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    align-self: center;
+    margin-bottom: 2px;
+}
+
+.edit-routine-btn.active {
+    background-color: #4a76a8;
+    color: white;
+}
+
+/* edit-only elements appear only while edit mode is on */
+.edit-only {
+    display: none;
+}
+
+.routine-container.edit-mode .edit-only {
+    display: block;
+}
+
+.remove-exercise-form {
+    margin-left: 0.5rem;
+}
+.routine-container.edit-mode .remove-exercise-form {
+    display: inline-block;
+}
+
+.remove-exercise-btn {
+    background-color: #fdecea;
+    border: 1px solid #f5b7b1;
+    color: #c0392b;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.restore-form {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.restore-btn {
+    background: none;
+    border: 1px dashed #c8d8e8;
+    color: #4a76a8;
+    border-radius: 4px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.add-exercise-wrap {
+    margin-top: 0.25rem;
+}
+
+.add-exercise-toggle {
+    width: 100%;
+    background: none;
+    border: 1px dashed #b8c8d8;
+    color: #4a76a8;
+    border-radius: 5px;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.add-exercise-box {
+    background-color: white;
+    border: 1px solid #e0e6ec;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+}
+
+.add-ex-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.add-ex-sets { width: 64px; }
+.add-ex-reps { width: 90px; }
+
+.add-ex-row input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* ── Equipment icons & badges ───────────────────────────────── */
+.eq-icon {
+    display: inline-flex;
+    align-items: center;
+    color: #4a76a8;
+}
+
+.eq-icon svg { display: block; }
+
+.picker-title svg,
+.settings-opt-btn svg {
+    vertical-align: -2px;
+}
+
+.custom-badge {
+    background-color: #fef5e7;
+    color: #b9770e;
+    font-size: 0.72rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* ── Set add/remove controls ────────────────────────────────── */
+.set-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin: 0.25rem 0 0.5rem;
+}
+
+.set-ctrl-btn {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #555;
+    border-radius: 4px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.set-ctrl-btn:active {
+    background-color: #e8e8e8;
+}
+
+/* ── Weight picker ──────────────────────────────────────────── */
+.weight-picker {
+    background-color: white;
+    border: 1px solid #e0e6ec;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.picker-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.picker-title {
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #888;
+    flex: 1;
+}
+
+.picker-total {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #4a76a8;
+    font-variant-numeric: tabular-nums;
+}
+
+.picker-settings-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    line-height: 1;
+}
+.picker-settings-btn:hover { color: #555; }
+
+/* Settings panel */
+.picker-settings-panel {
+    background-color: #f4f7fa;
+    border-radius: 5px;
+    padding: 0.6rem;
+    margin-bottom: 0.75rem;
+}
+
+.settings-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0.35rem;
+}
+.settings-row:last-child { margin-bottom: 0; }
+
+.settings-label {
+    font-size: 0.78rem;
+    font-weight: bold;
+    color: #888;
+    min-width: 60px;
+}
+
+.settings-opt-btn {
+    background-color: white;
+    border: 1px solid #cdd5de;
+    color: #555;
+    border-radius: 20px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.settings-opt-btn.active {
+    background-color: #4a76a8;
+    border-color: #4a76a8;
+    color: white;
+}
+
+/* Action buttons row */
+.picker-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+}
+
+.action-label {
+    font-size: 0.75rem;
+    color: #999;
+    font-weight: bold;
+}
+
+.action-sep {
+    width: 1px;
+    height: 16px;
+    background-color: #ddd;
+    margin: 0 0.1rem;
+}
+
+.action-btn {
+    border-radius: 4px;
+    padding: 0.28rem 0.6rem;
+    font-size: 0.82rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+.action-btn.ghost {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    color: #666;
+}
+.action-btn.blue {
+    background-color: #e8f0f8;
+    border-color: #c8d8e8;
+    color: #4a76a8;
+}
+.action-btn.blue.applied {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: white;
+}
+.action-btn.muted {
+    background-color: transparent;
+    border-color: transparent;
+    color: #bbb;
+    margin-left: auto;
+    font-size: 1rem;
+}
+
+/* Dumbbell weight chips — single scrollable row */
+.db-steps {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.35rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+.db-step-btn {
+    background-color: #f5f8fc;
+    border: 1px solid #d0dce8;
+    color: #4a76a8;
+    border-radius: 20px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.db-step-btn.selected {
+    background-color: #4a76a8;
+    border-color: #4a76a8;
+    color: white;
+}
+.db-step-btn:active { transform: scale(0.94); }
+
+/* Dumbbell visual rack */
+.dumbbell-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background-color: #f4f7fa;
+    border-radius: 5px;
+    padding: 0.6rem 0.5rem 1.6rem;
+    margin-bottom: 0.6rem;
+}
+
+.db-arrow {
+    background-color: white;
+    border: 2px solid #c8d8e8;
+    color: #4a76a8;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.db-arrow:active { transform: scale(0.92); }
+
+.db-draw {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 110px;
+    min-height: 64px;
+    justify-content: center;
+}
+
+.db-side {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.db-disc {
+    width: 10px;
+    background: linear-gradient(90deg, #3d566e, #2c3e50);
+    border-radius: 3px;
+    box-shadow: inset -2px 0 3px rgba(0,0,0,0.3);
+}
+
+.db-handle {
+    width: 44px;
+    height: 7px;
+    background: linear-gradient(#b8c2cc, #8f9aa5);
+    border-radius: 2px;
+}
+
+.db-weight-label {
+    position: absolute;
+    bottom: -22px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: #4a76a8;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Machine pin stack */
+.machine-visual {
+    display: flex;
+    justify-content: center;
+    background-color: #f4f7fa;
+    border-radius: 5px;
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.machine-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 150px;
+}
+
+.stack-plate {
+    position: relative;
+    height: 15px;
+    background-color: #d5dde5;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.stack-plate-num {
+    font-size: 0.62rem;
+    font-weight: bold;
+    color: #8a98a8;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.stack-plate.selected {
+    background-color: #4a76a8;
+}
+
+.stack-plate.selected .stack-plate-num {
+    color: white;
+}
+
+.stack-plate.pinned::after {
+    content: '';
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #f1c40f;
+    border: 2px solid #d4ac0d;
+}
+
+/* Brief highlight when the picker fills inputs */
+.weight-input.just-filled {
+    background-color: #eafaf1;
+    transition: background-color 0.4s;
+}
+
+.picker-hint {
+    font-size: 0.78rem;
+    color: #aaa;
+    margin: 0;
+    text-align: center;
+}
+
+.barbell-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90px;
+    background-color: #f4f7fa;
+    border-radius: 5px;
+    padding: 0.5rem 0.25rem;
+    margin-bottom: 0.6rem;
+    overflow-x: auto;
+}
+
+.bv-bar {
+    width: 90px;
+    min-width: 50px;
+    height: 8px;
+    background: linear-gradient(#b8c2cc, #8f9aa5);
+    border-radius: 2px;
+    flex-shrink: 1;
+}
+
+.bv-side {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.bv-plate {
+    border: none;
+    border-radius: 3px;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: inset -2px 0 3px rgba(0,0,0,0.25);
+    flex-shrink: 0;
+}
+
+.bv-plate:active {
+    opacity: 0.7;
+}
+
+.bv-hint {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.72rem;
+    color: #a5b1bd;
+    pointer-events: none;
+}
+
+.plate-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+}
+
+.plate-add-btn {
+    background-color: white;
+    border: 2px solid #7f8c8d;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.plate-add-btn:active {
+    transform: scale(0.92);
+}
+
+
 /* ── Bottom timer bar ───────────────────────────────────────── */
 .timer-bar {
     position: fixed;

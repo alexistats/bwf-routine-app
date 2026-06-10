@@ -3,7 +3,8 @@ from flask import (Blueprint, render_template, current_app, redirect, url_for,
 from flask_login import login_required, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import func
-from app.models import User, Workout, ExerciseLog, UserProgression
+from app.models import (User, Workout, ExerciseLog, UserProgression,
+                         CustomExercise, HiddenExercise)
 from app import db
 from datetime import datetime, timezone
 
@@ -11,20 +12,64 @@ main = Blueprint('main', __name__)
 
 MIN_PASSWORD_LENGTH = 8
 MAX_GYM_SETS = 10
+ALLOWED_EQUIPMENT = ('barbell', 'dumbbell', 'machine', 'bodyweight')
 
 
 def _is_ajax():
     return request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
 
+def _gym_routine_for_user():
+    """Built-in gym routine with the user's removals and additions applied."""
+    base = current_app.config['GYM_ROUTINE_DATA']
+    if not current_user.is_authenticated:
+        return base
+
+    hidden = {
+        h.exercise_name
+        for h in HiddenExercise.query.filter_by(
+            user_id=current_user.id, routine_type='gym')
+    }
+    customs = CustomExercise.query.filter_by(
+        user_id=current_user.id, routine_type='gym').all()
+
+    routine = {
+        section: [ex for ex in exercises if ex['name'] not in hidden]
+        for section, exercises in base.items()
+    }
+    for custom in customs:
+        routine.setdefault(custom.section, []).append(custom.to_dict())
+    return routine
+
+
+def _default_routine_view():
+    """Last routine the user interacted with, falling back to bwf."""
+    if not current_user.is_authenticated:
+        return 'bwf'
+    view = session.get('current_routine_view')
+    if view in ('bwf', 'gym'):
+        return view
+    last_workout = (Workout.query.filter_by(user_id=current_user.id)
+                    .order_by(Workout.id.desc()).first())
+    if last_workout and last_workout.routine_type in ('bwf', 'gym'):
+        return last_workout.routine_type
+    return 'bwf'
+
+
 @main.route('/')
 def home():
-    routine = request.args.get('routine', 'bwf')
+    routine = request.args.get('routine')
+    if routine not in ('bwf', 'gym'):
+        routine = _default_routine_view()
     if current_user.is_authenticated:
         session['current_routine_view'] = routine
 
+    hidden_count = 0
     if routine == 'gym':
-        routine_data = current_app.config['GYM_ROUTINE_DATA']
+        routine_data = _gym_routine_for_user()
+        if current_user.is_authenticated:
+            hidden_count = HiddenExercise.query.filter_by(
+                user_id=current_user.id, routine_type='gym').count()
     else:
         routine_data = current_app.config['ROUTINE_DATA']
 
@@ -66,6 +111,7 @@ def home():
         last_logs=last_logs,
         user_progressions=user_progressions,
         progression_data=progression_data,
+        hidden_count=hidden_count,
     )
 
 
@@ -147,8 +193,12 @@ def exercise(section, index):
 
 
 def _gym_exercise_view(section, index):
-    routine_data = current_app.config['GYM_ROUTINE_DATA']
-    exercise_obj = routine_data[section][index]
+    routine_data = _gym_routine_for_user()
+    exercises = routine_data.get(section, [])
+    if index >= len(exercises):
+        flash('Exercise not found.')
+        return redirect(url_for('main.home', routine='gym'))
+    exercise_obj = exercises[index]
     return render_template(
         'exercise.html',
         exercise=exercise_obj,
@@ -184,6 +234,84 @@ def _bwf_exercise_view(section, index):
     )
 
 
+@main.route('/routine/add_exercise', methods=['POST'])
+@login_required
+def add_exercise():
+    section = request.form.get('section', '').strip()
+    name = request.form.get('name', '').strip()
+
+    if not name or section not in current_app.config['GYM_ROUTINE_DATA']:
+        flash('Exercise name and a valid section are required.')
+        return redirect(url_for('main.home', routine='gym'))
+
+    visible_names = {
+        ex['name'].lower()
+        for exercises in _gym_routine_for_user().values()
+        for ex in exercises
+    }
+    if name.lower() in visible_names:
+        flash(f'"{name}" is already in your routine.')
+        return redirect(url_for('main.home', routine='gym'))
+
+    sets = request.form.get('sets', type=int) or 3
+    sets = max(1, min(sets, MAX_GYM_SETS))
+    reps = request.form.get('reps', '').strip() or '8-12'
+    equipment = request.form.get('equipment', 'machine')
+    if equipment not in ALLOWED_EQUIPMENT:
+        equipment = 'machine'
+
+    db.session.add(CustomExercise(
+        user_id=current_user.id,
+        routine_type='gym',
+        section=section,
+        name=name,
+        sets=sets,
+        reps=reps[:20],
+        weighted=(equipment != 'bodyweight'),
+        equipment=equipment,
+        description=request.form.get('description', '').strip(),
+    ))
+    db.session.commit()
+    flash(f'Added "{name}" to {section}.')
+    return redirect(url_for('main.home', routine='gym'))
+
+
+@main.route('/routine/remove_exercise', methods=['POST'])
+@login_required
+def remove_exercise():
+    name = request.form.get('name', '').strip()
+    if not name:
+        return redirect(url_for('main.home', routine='gym'))
+
+    custom = CustomExercise.query.filter_by(
+        user_id=current_user.id, routine_type='gym', name=name).first()
+    if custom:
+        db.session.delete(custom)
+    else:
+        already_hidden = HiddenExercise.query.filter_by(
+            user_id=current_user.id, routine_type='gym',
+            exercise_name=name).first()
+        if not already_hidden:
+            db.session.add(HiddenExercise(
+                user_id=current_user.id,
+                routine_type='gym',
+                exercise_name=name,
+            ))
+    db.session.commit()
+    flash(f'Removed "{name}" from your routine.')
+    return redirect(url_for('main.home', routine='gym'))
+
+
+@main.route('/routine/restore_exercises', methods=['POST'])
+@login_required
+def restore_exercises():
+    HiddenExercise.query.filter_by(
+        user_id=current_user.id, routine_type='gym').delete()
+    db.session.commit()
+    flash('Removed exercises restored.')
+    return redirect(url_for('main.home', routine='gym'))
+
+
 @main.route('/start_workout')
 @login_required
 def start_workout():
@@ -194,6 +322,7 @@ def start_workout():
 
     session['current_workout_id'] = workout.id
     session['current_routine_type'] = routine_type
+    session['current_routine_view'] = routine_type
 
     flash('Workout started!')
     return redirect(url_for('main.home', routine=routine_type))

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import equipment_icon %}
 {% block title %}{% if routine_type == 'gym' %}Gym Routine{% else %}BWF Routine{% endif %}{% endblock %}
 {% block content %}
 <div class="routine-container">
@@ -8,6 +9,9 @@
            class="routine-tab {% if routine_type == 'bwf' %}active{% endif %}">BWF</a>
         <a href="{{ url_for('main.home', routine='gym') }}"
            class="routine-tab {% if routine_type == 'gym' %}active{% endif %}">Gym</a>
+        {% if current_user.is_authenticated and routine_type == 'gym' %}
+        <button type="button" id="edit-routine-toggle" class="edit-routine-btn" title="Add or remove exercises">✎ Edit</button>
+        {% endif %}
     </div>
 
     {% if current_user.is_authenticated %}
@@ -16,11 +20,20 @@
             Workout in progress — tap an exercise to log it.
         </div>
         {% else %}
-        <div class="start-workout-cta">
-            <a href="{{ url_for('main.start_workout', routine_type=routine_type) }}" class="btn primary">
-                Start {% if routine_type == 'gym' %}Gym{% else %}BWF{% endif %} Workout
+        <div class="workout-launcher">
+            <p class="launcher-title">Ready to train?</p>
+            <a href="{{ url_for('main.start_workout', routine_type=routine_type) }}" class="btn primary launcher-btn">
+                ⚡ Start {% if routine_type == 'gym' %}Gym{% else %}BWF{% endif %} Workout
             </a>
+            <p class="launcher-hint">Showing your last-used routine — switch tabs to train the other.</p>
         </div>
+        {% endif %}
+
+        {% if routine_type == 'gym' and hidden_count %}
+        <form method="POST" action="{{ url_for('main.restore_exercises') }}" class="restore-form edit-only">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="restore-btn">↩ Restore {{ hidden_count }} removed exercise{{ 's' if hidden_count > 1 }}</button>
+        </form>
         {% endif %}
     {% endif %}
 
@@ -45,9 +58,12 @@
                     <div class="exercise-card-main">
                         <h3>{{ exercise.name }}</h3>
                         <div class="exercise-meta">
+                            {% if routine_type == 'gym' and exercise.get('equipment') and exercise.equipment != 'bodyweight' %}
+                            <span class="eq-icon" title="{{ exercise.equipment }}">{{ equipment_icon(exercise.equipment) }}</span>
+                            {% endif %}
                             <span>{{ exercise.sets }}×{{ exercise.reps }}</span>
-                            {% if exercise.get('weighted') %}
-                            <span class="weighted-badge">weighted</span>
+                            {% if exercise.get('custom') %}
+                            <span class="custom-badge">custom</span>
                             {% endif %}
                         </div>
 
@@ -64,7 +80,16 @@
                         <div class="exercise-last-reps">{{ last_log.reps_per_set }} reps</div>
                         {% endif %}
                     </div>
-                    <span class="expand-icon {% if can_log %}{% else %}nav-arrow{% endif %}">›</span>
+
+                    {% if current_user.is_authenticated and routine_type == 'gym' %}
+                    <form method="POST" action="{{ url_for('main.remove_exercise') }}" class="remove-exercise-form edit-only">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="name" value="{{ exercise.name }}">
+                        <button type="submit" class="remove-exercise-btn" title="Remove {{ exercise.name }}">×</button>
+                    </form>
+                    {% endif %}
+
+                    <span class="expand-icon {% if not can_log %}nav-arrow{% endif %}">›</span>
                 </div>
 
                 {% if can_log %}
@@ -100,6 +125,11 @@
                         <button type="button" class="unit-toggle-btn" data-unit="lbs" onclick="setUnit('lbs')">lbs</button>
                         <button type="button" class="unit-toggle-btn" data-unit="kg" onclick="setUnit('kg')">kg</button>
                     </div>
+
+                    <div class="weight-picker"
+                         data-exercise="{{ exercise.name }}"
+                         data-default-equipment="{{ exercise.get('equipment', 'machine') }}">
+                    </div>
                     {% endif %}
 
                     <form class="exercise-log-form" method="POST"
@@ -113,30 +143,37 @@
                         <input type="hidden" class="weight-unit-input" name="weight_unit" value="lbs">
                         {% endif %}
 
-                        {% for i in range(1, num_sets + 1) %}
-                        <div class="set-row">
-                            <span class="set-label">Set {{ i }}</span>
-                            <div class="set-inputs">
-                                {% if exercise.weighted %}
-                                <div class="form-group">
-                                    <label>Weight (<span class="unit-display">lbs</span>)</label>
-                                    <input type="number" class="weight-input"
-                                           name="weight_set_{{ i }}"
-                                           step="0.5" min="0"
-                                           data-stored-value="{{ last_weights[i-1] if last_weights|length >= i else '' }}"
-                                           data-stored-unit="{{ last_unit }}"
-                                           value="{{ last_weights[i-1] if last_weights|length >= i else '' }}">
-                                </div>
-                                {% endif %}
-                                <div class="form-group">
-                                    <label>Reps</label>
-                                    <input type="number" name="reps_set_{{ i }}"
-                                           min="1" max="100"
-                                           value="{{ last_reps_list[i-1] if last_reps_list|length >= i else '' }}">
+                        <div class="set-rows" data-weighted="{{ 1 if exercise.weighted else 0 }}">
+                            {% for i in range(1, num_sets + 1) %}
+                            <div class="set-row">
+                                <span class="set-label">Set {{ i }}</span>
+                                <div class="set-inputs">
+                                    {% if exercise.weighted %}
+                                    <div class="form-group">
+                                        <label>Weight (<span class="unit-display">lbs</span>)</label>
+                                        <input type="number" class="weight-input"
+                                               name="weight_set_{{ i }}"
+                                               step="0.5" min="0"
+                                               data-stored-value="{{ last_weights[i-1] if last_weights|length >= i else '' }}"
+                                               data-stored-unit="{{ last_unit }}"
+                                               value="{{ last_weights[i-1] if last_weights|length >= i else '' }}">
+                                    </div>
+                                    {% endif %}
+                                    <div class="form-group">
+                                        <label>Reps</label>
+                                        <input type="number" name="reps_set_{{ i }}"
+                                               min="1" max="100"
+                                               value="{{ last_reps_list[i-1] if last_reps_list|length >= i else '' }}">
+                                    </div>
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
+
+                        <div class="set-controls">
+                            <button type="button" class="set-ctrl-btn" data-remove-set>− set</button>
+                            <button type="button" class="set-ctrl-btn" data-add-set>+ set</button>
+                        </div>
 
                         <div class="form-error"></div>
                         <button type="submit" class="btn primary full-width">Log Exercise</button>
@@ -168,18 +205,25 @@
                         <input type="hidden" name="progression_level" value="{{ user_prog.current_progression }}">
                         {% endif %}
 
-                        {% for i in range(1, num_sets + 1) %}
-                        <div class="set-row">
-                            <span class="set-label">Set {{ i }}</span>
-                            <div class="set-inputs">
-                                <div class="form-group">
-                                    <label>Reps</label>
-                                    <input type="number" name="reps_set_{{ i }}"
-                                           min="1" max="30" value="{{ default_reps }}">
+                        <div class="set-rows" data-weighted="0" data-default-reps="{{ default_reps }}">
+                            {% for i in range(1, num_sets + 1) %}
+                            <div class="set-row">
+                                <span class="set-label">Set {{ i }}</span>
+                                <div class="set-inputs">
+                                    <div class="form-group">
+                                        <label>Reps</label>
+                                        <input type="number" name="reps_set_{{ i }}"
+                                               min="1" max="100" value="{{ default_reps }}">
+                                    </div>
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
+
+                        <div class="set-controls">
+                            <button type="button" class="set-ctrl-btn" data-remove-set>− set</button>
+                            <button type="button" class="set-ctrl-btn" data-add-set>+ set</button>
+                        </div>
 
                         <div class="form-error"></div>
                         <button type="submit" class="btn primary full-width">Log Exercise</button>
@@ -192,6 +236,37 @@
             </li>
             {% endfor %}
         </ul>
+
+        {% if current_user.is_authenticated and routine_type == 'gym' %}
+        <div class="add-exercise-wrap edit-only">
+            <button type="button" class="add-exercise-toggle">+ Add exercise to {{ section }}</button>
+            <div class="add-exercise-box" hidden>
+                <form method="POST" action="{{ url_for('main.add_exercise') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="section" value="{{ section }}">
+                    <div class="form-group">
+                        <input type="text" name="name" placeholder="Exercise name" required maxlength="100">
+                    </div>
+                    <div class="add-ex-row">
+                        <input type="number" name="sets" value="3" min="1" max="10" class="add-ex-sets"> sets ×
+                        <input type="text" name="reps" value="8-12" maxlength="20" class="add-ex-reps"> reps
+                    </div>
+                    <div class="form-group">
+                        <select name="equipment">
+                            <option value="machine">Machine</option>
+                            <option value="dumbbell">Dumbbell</option>
+                            <option value="barbell">Barbell</option>
+                            <option value="bodyweight">Bodyweight</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="description" rows="2" placeholder="Notes / form cues (optional)" maxlength="500"></textarea>
+                    </div>
+                    <button type="submit" class="btn primary full-width">Add Exercise</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
     </section>
     {% endfor %}
 
