@@ -1,25 +1,29 @@
 from app import db, login_manager
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, timezone
+
+
+def utc_now():
+    return datetime.now(timezone.utc)
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
     email = db.Column(db.String(120), unique=True, index=True)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(256))
     workouts = db.relationship('Workout', backref='user', lazy='dynamic')
     progressions = db.relationship('UserProgression', backref='user', lazy='dynamic')
 
 
 class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=utc_now)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     routine_type = db.Column(db.String(20), default='bwf')
     exercises = db.relationship('ExerciseLog', backref='workout', lazy='dynamic')
@@ -56,4 +60,4 @@ class UserProgression(db.Model):
     exercise_category = db.Column(db.String(100))  # e.g., "Pull-up", "Squat"
     current_progression = db.Column(db.Integer)  # Index of current progression
     current_reps = db.Column(db.Integer, default=5)  # Current target reps
-    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
+    last_updated = db.Column(db.DateTime, default=utc_now)

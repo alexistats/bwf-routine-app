@@ -8,7 +8,8 @@
         <h3>Current Progressions</h3>
         <div class="progression-cards">
             {% for progression in user_progressions %}
-                {% set prog_data = progression_data[progression.exercise_category] %}
+                {% set prog_data = progression_data.get(progression.exercise_category) %}
+                {% if prog_data %}
                 {% set current_exercise = prog_data|selectattr('level', 'eq', progression.current_progression)|first %}
 
                 <div class="progression-card">
@@ -20,6 +21,7 @@
                         <p><strong>Last Updated:</strong> {{ progression.last_updated.strftime('%Y-%m-%d') }}</p>
                     </div>
                 </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>

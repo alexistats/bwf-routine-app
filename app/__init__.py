@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_wtf import CSRFProtect
 from config import Config
 import json
 import os
@@ -8,6 +9,7 @@ import os
 db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.login_view = 'main.login'
+csrf = CSRFProtect()
 
 
 def create_app(config_class=Config):
@@ -16,6 +18,7 @@ def create_app(config_class=Config):
 
     db.init_app(app)
     login_manager.init_app(app)
+    csrf.init_app(app)
 
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data')
 
@@ -30,5 +33,9 @@ def create_app(config_class=Config):
 
     from app.routes import main
     app.register_blueprint(main)
+
+    # Create tables on startup — run.py is bypassed under gunicorn
+    with app.app_context():
+        db.create_all()
 
     return app

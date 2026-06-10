@@ -1,0 +1,91 @@
+# BWF Routine App
+
+A mobile-friendly workout tracker built with Flask. Supports two routines:
+
+- **BWF Routine** — the [Bodyweight Fitness Recommended Routine](https://www.reddit.com/r/bodyweightfitness/wiki/kb/recommended_routine/), with automatic progression tracking (e.g., scapular pulls → arch hangs → negative pull-ups → pull-ups)
+- **Gym Routine** — a machine/free-weight routine with per-set weight and rep logging
+
+## Features
+
+- **Workout sessions** — start a workout, log exercises as you go, end when done (empty workouts are discarded)
+- **Progression system (BWF)** — hit 3 sets of 8+ reps and the app advances you to the next exercise progression automatically
+- **Weight tracking (Gym)** — log weight × reps per set; your last session's numbers are pre-filled the next time
+- **kg/lbs toggle** — switch units on the fly for machines labelled differently; preference is remembered, conversions apply to inputs and your last-session summary
+- **Rest timer** — built-in 60/90/120s countdown with vibration on completion
+- **Progress page** — current progression levels and recent workout history with per-set details
+- **Mobile-first UI** — responsive layout designed to be used at the gym from a phone
+
+## Tech stack
+
+Flask 3 · Flask-SQLAlchemy · Flask-Login · Flask-WTF (CSRF) · Jinja2 · vanilla JS · SQLite (dev) / PostgreSQL (production)
+
+## Running locally
+
+```bash
+# 1. Clone and enter the repo
+git clone https://github.com/alexistats/bwf-routine-app.git
+cd bwf-routine-app
+
+# 2. Create a virtualenv and install dependencies
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+
+# 3. Run the dev server
+python run.py
+```
+
+The app starts on `http://localhost:5000` with a local SQLite database (`bwf_routine.db`), created automatically on first run.
+
+### Configuration
+
+| Environment variable | Purpose | Default |
+|---|---|---|
+| `DATABASE_URL` | SQLAlchemy database URL (`postgres://` URLs are normalized automatically) | `sqlite:///bwf_routine.db` |
+| `SECRET_KEY` | Flask session/CSRF signing key — **required in production** | insecure dev key (warns) |
+
+## Running tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
+The suite covers progression advancement rules, gym set parsing, the full register → login → workout → log flow, and permission checks.
+
+## Deployment (Render + Neon)
+
+The app is set up for a free-tier deployment:
+
+1. **Neon** — create a free PostgreSQL project at [neon.tech](https://neon.tech) and copy the connection string
+2. **Render** — create a Web Service at [render.com](https://render.com) pointed at this repo (`main` branch):
+   - Build command: `pip install -r requirements.txt`
+   - Start command: auto-detected from the `Procfile`
+   - Environment variables: `DATABASE_URL` (Neon connection string) and `SECRET_KEY` (e.g., `python -c "import secrets; print(secrets.token_hex(32))"`)
+
+Tables are created automatically on first startup. Note that both free tiers sleep when idle — the first request after a quiet period takes ~30–60s.
+
+## Project structure
+
+```
+app/
+  __init__.py          # App factory: DB, login, CSRF, JSON data loading
+  models.py            # User, Workout, ExerciseLog, UserProgression
+  routes.py            # Views + workout/progression logic
+  static/
+    css/style.css      # Responsive styles
+    js/main.js         # Rest timer, dynamic set inputs, kg/lbs converter
+  templates/           # Jinja2 templates
+data/
+  routine_data.json    # BWF routine structure
+  progressions.json    # BWF progression levels per exercise
+  gym_routine.json     # Gym routine structure (Push/Pull/Legs/Core)
+tests/                 # Pytest suite
+config.py              # Environment-driven configuration
+run.py                 # Dev entry point
+Procfile               # Production entry point (gunicorn)
+```
+
+## Customizing routines
+
+Routines are plain JSON in `data/` — edit `gym_routine.json` to add or swap exercises (set `"weighted": true` for anything that should track weight). Changes take effect on restart; no database migration needed.
