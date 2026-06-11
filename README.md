@@ -69,7 +69,7 @@ The app is set up for a free-tier deployment:
 1. **Neon** — create a free PostgreSQL project at [neon.tech](https://neon.tech) and copy the connection string
 2. **Render** — create a Web Service at [render.com](https://render.com) pointed at this repo (`main` branch):
    - Build command: `pip install -r requirements.txt`
-   - Start command: auto-detected from the `Procfile`
+   - Start command: `gunicorn "app:create_app()" --bind 0.0.0.0:$PORT --timeout 300` — set this explicitly in the dashboard (Render pre-fills a generic `gunicorn app:app` that won't work with this app's factory pattern; the `--timeout 300` gives AI program generation room to finish)
    - Python version: auto-detected from `.python-version` (don't set `PYTHON_VERSION` manually)
    - Environment variables: `DATABASE_URL` (Neon connection string) and `SECRET_KEY` (e.g., `python -c "import secrets; print(secrets.token_hex(32))"`)
 
