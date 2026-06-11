@@ -1,4 +1,93 @@
-/* Base Styles */
+/* ════ Design tokens ═══════════════════════════════════════════
+   Every color in the app comes from these variables; the dark
+   theme only swaps tokens. The theme is set as data-theme on
+   <html> (see base.html + main.js). */
+:root {
+    color-scheme: light;
+
+    --bg: #f3f5f9;
+    --surface: #ffffff;
+    --surface-2: #f5f7fb;
+    --surface-3: #eceff6;
+
+    --text: #18202e;
+    --text-2: #55657c;
+    --text-3: #8b99ad;
+
+    --border: #e3e8f0;
+    --border-strong: #cdd6e2;
+
+    --accent: #3d6be0;
+    --accent-strong: #2f55be;
+    --accent-soft: #e9effc;
+    --accent-border: #c3d3f3;
+    --on-accent: #ffffff;
+    --ring: rgba(61, 107, 224, 0.22);
+
+    --success: #1f9d58;
+    --success-soft: #e4f7ec;
+    --success-border: #a9dfbf;
+
+    --danger: #d23f3f;
+    --danger-soft: #fdecea;
+    --danger-border: #f3b8b2;
+
+    --warning-text: #9a6a08;
+    --warning-soft: #fdf3df;
+
+    --header-bg: rgba(255, 255, 255, 0.85);
+    --timer-bg: #1d2735;
+
+    --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+    --shadow: 0 1px 3px rgba(16, 24, 40, 0.07), 0 4px 12px rgba(16, 24, 40, 0.05);
+    --shadow-lg: 0 8px 24px rgba(16, 24, 40, 0.10);
+
+    --radius: 12px;
+    --radius-sm: 8px;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --bg: #0e131b;
+    --surface: #18202b;
+    --surface-2: #1f2937;
+    --surface-3: #273344;
+
+    --text: #e8edf5;
+    --text-2: #a3b1c6;
+    --text-3: #6e7d93;
+
+    --border: #283447;
+    --border-strong: #3a4a61;
+
+    --accent: #7ca2f8;
+    --accent-strong: #97b6fa;
+    --accent-soft: #1d2a44;
+    --accent-border: #34518a;
+    --on-accent: #0c1424;
+    --ring: rgba(124, 162, 248, 0.25);
+
+    --success: #34c474;
+    --success-soft: #14301f;
+    --success-border: #245c3a;
+
+    --danger: #ef6e63;
+    --danger-soft: #3a1d1a;
+    --danger-border: #6e3029;
+
+    --warning-text: #e2b34e;
+    --warning-soft: #33290f;
+
+    --header-bg: rgba(14, 19, 27, 0.82);
+    --timer-bg: #0a0f16;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* ════ Base ═════════════════════════════════════════════════════ */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -8,66 +97,186 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
+    color: var(--text);
+    background-color: var(--bg);
 }
 
 .container {
-    max-width: 100%;
+    max-width: 760px;
     padding: 0 15px;
     margin: 0 auto;
 }
 
-header {
-    background-color: #4a76a8;
-    color: white;
-    padding: 1rem;
-    text-align: center;
+main {
+    padding: 1.25rem 0 2rem;
+}
+
+a {
+    color: var(--accent);
+}
+
+/* ════ Header ═══════════════════════════════════════════════════ */
+.site-header {
     position: sticky;
     top: 0;
     z-index: 100;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
 }
 
-header h1 {
-    font-size: 1.5rem;
-    margin-bottom: 0.1rem;
+.header-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0.6rem 15px 0.5rem;
 }
 
-header .tagline {
-    font-size: 0.8rem;
-    color: #d7e3f2;
-    font-style: italic;
-    margin-bottom: 0.5rem;
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
 }
 
-nav a {
-    color: white;
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     text-decoration: none;
-    padding: 0.5rem;
+    color: var(--text);
+    min-width: 0;
 }
 
-main {
-    padding: 1rem 0;
+.brand-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+    display: block;
 }
 
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+}
+
+.brand-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.tagline {
+    font-size: 0.7rem;
+    color: var(--text-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.theme-toggle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.theme-toggle:active {
+    transform: scale(0.92);
+}
+
+.theme-toggle svg {
+    display: block;
+}
+
+/* Show the icon of the theme you'd switch to */
+.theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+.site-nav {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.site-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.site-nav a,
+nav a {
+    color: var(--text-2);
+    text-decoration: none;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.site-nav a:hover {
+    background-color: var(--surface-3);
+    color: var(--text);
+}
+
+.site-nav a.workout-active:hover {
+    background-color: var(--danger);
+}
+
+/* ════ Footer ═══════════════════════════════════════════════════ */
 footer {
     text-align: center;
-    padding: 1rem;
-    background-color: #f1f1f1;
-    margin-top: 2rem;
+    padding: 1.5rem;
+    color: var(--text-3);
+    font-size: 0.85rem;
+    margin-top: 1rem;
 }
 
-/* Routine List Styles */
+/* ════ Flash messages ═══════════════════════════════════════════ */
+.flash-messages {
+    margin-bottom: 1rem;
+}
+
+.flash-message {
+    background-color: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+/* ════ Routine list ═════════════════════════════════════════════ */
 .routine-section {
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
 }
 
 .routine-section h2 {
-    background-color: #4a76a8;
-    color: white;
-    padding: 0.75rem;
-    border-radius: 5px 5px 0 0;
-    font-size: 1.2rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    margin: 0 0 0.6rem 0.25rem;
+    background: none;
+    padding: 0;
 }
 
 .exercise-list {
@@ -76,13 +285,14 @@ footer {
 
 .exercise-card {
     display: block;
-    background-color: white;
+    background-color: var(--surface);
     padding: 1rem;
     margin-bottom: 0.5rem;
-    border-radius: 5px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
     text-decoration: none;
-    color: #333;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
     transition: transform 0.2s;
 }
 
@@ -97,45 +307,45 @@ footer {
 
 .exercise-meta {
     display: flex;
+    align-items: center;
+    gap: 1rem;
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-2);
 }
 
-.exercise-meta span {
-    margin-right: 1rem;
-}
-
-/* Exercise Detail Styles */
+/* ════ Exercise detail page ═════════════════════════════════════ */
 .exercise-detail {
-    background-color: white;
-    border-radius: 5px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow);
 }
 
 .back-button {
     display: inline-block;
     margin-bottom: 1rem;
-    color: #4a76a8;
+    color: var(--accent);
     text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
 }
 
-/* Add to style.css */
-
-/* Auth Styles */
+/* ════ Auth & forms ═════════════════════════════════════════════ */
 .auth-container {
-    max-width: 400px;
+    max-width: 420px;
     margin: 0 auto;
-    background-color: white;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     padding: 2rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
 }
 
 .auth-container h2 {
     margin-bottom: 1.5rem;
     text-align: center;
-    color: #4a76a8;
+    letter-spacing: -0.01em;
 }
 
 .form-group {
@@ -144,18 +354,37 @@ footer {
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-2);
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
     font-size: 1rem;
+    font-family: inherit;
+    background-color: var(--surface);
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--ring);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-3);
 }
 
 .form-group textarea {
@@ -164,69 +393,102 @@ footer {
 
 .btn {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
+    padding: 0.7rem 1.4rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
     font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
     text-decoration: none;
     text-align: center;
+    transition: filter 0.15s, transform 0.05s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn:hover {
+    filter: brightness(1.05);
+}
+
+.btn:active {
+    transform: scale(0.98);
 }
 
 .btn.primary {
-    background-color: #4a76a8;
-    color: white;
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    color: var(--on-accent);
+    box-shadow: 0 2px 8px var(--ring);
 }
 
 .btn.secondary {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: var(--surface-3);
+    color: var(--text);
+    border: 1px solid var(--border);
 }
 
 .auth-link {
     margin-top: 1rem;
     text-align: center;
+    color: var(--text-2);
 }
 
-/* Progress Tracking Styles */
+/* ════ Progress tracking ════════════════════════════════════════ */
 .progression-section {
-    background-color: #f9f9f9;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
     padding: 1.5rem;
-    border-radius: 5px;
+    border-radius: var(--radius);
     margin: 1.5rem 0;
 }
 
 .current-progression {
-    background-color: white;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     padding: 1rem;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-sm);
 }
 
 .progression-goal {
-    color: #4a76a8;
-    font-weight: bold;
+    color: var(--accent);
+    font-weight: 600;
     margin-top: 0.5rem;
 }
 
 .progression-current {
-    color: #666;
+    color: var(--text-2);
     margin-top: 0.25rem;
 }
 
 .log-exercise-form {
-    background-color: white;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     padding: 1.5rem;
-    border-radius: 5px;
+    border-radius: var(--radius);
     margin-top: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-sm);
 }
 
-/* Progress Page Styles */
+/* ════ Progress page ════════════════════════════════════════════ */
 .progress-container {
     max-width: 800px;
     margin: 0 auto;
+}
+
+.progress-container h2 {
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+}
+
+.progression-summary > h3,
+.workout-history > h3 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    margin: 1.5rem 0 0.25rem 0.25rem;
 }
 
 .progression-cards {
@@ -237,16 +499,17 @@ footer {
 }
 
 .progression-card {
-    background-color: white;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     padding: 1.5rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
 }
 
 .progression-card h4 {
-    color: #4a76a8;
+    color: var(--accent);
     margin-bottom: 0.75rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border);
     padding-bottom: 0.5rem;
 }
 
@@ -258,18 +521,23 @@ footer {
 }
 
 .workout-card {
-    background-color: white;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     padding: 1.5rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
 }
 
 .workout-card h4 {
     margin-bottom: 0.5rem;
-    color: #4a76a8;
+    color: var(--accent);
 }
 
-/* Workout Detail Styles */
+.workout-card .btn {
+    margin-top: 0.5rem;
+}
+
+/* ════ Workout detail ═══════════════════════════════════════════ */
 .workout-detail-container {
     max-width: 800px;
     margin: 0 auto;
@@ -280,28 +548,30 @@ footer {
 }
 
 .exercise-log-card {
-    background-color: white;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     padding: 1.5rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
     margin-bottom: 1rem;
 }
 
 .exercise-log-card h3 {
-    color: #4a76a8;
+    color: var(--accent);
     margin-bottom: 0.5rem;
 }
 
 .progression-name {
     font-style: italic;
-    color: #666;
+    color: var(--text-2);
     margin-bottom: 0.75rem;
 }
 
 .sets-reps {
-    background-color: #f9f9f9;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
     padding: 0.75rem;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     margin: 0.75rem 0;
 }
 
@@ -311,53 +581,66 @@ footer {
 
 .notes h4 {
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-2);
     margin-bottom: 0.25rem;
 }
 
-/* Active Workout Indicator */
+/* ════ Active workout indicator ═════════════════════════════════ */
 .workout-active {
-    background-color: #ff6b6b;
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    background-color: var(--danger);
+    color: white !important;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
 }
 
 .active-workout-banner {
-    background-color: #4a76a8;
-    color: white;
-    padding: 0.75rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    color: var(--on-accent);
+    padding: 0.75rem 1rem;
     text-align: center;
-    border-radius: 5px;
+    border-radius: var(--radius);
     margin-bottom: 1.5rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px var(--ring);
 }
 
-/* Routine Tabs */
+/* ════ Routine tabs ═════════════════════════════════════════════ */
 .routine-tabs {
     display: flex;
-    margin-bottom: 1.5rem;
-    border-bottom: 2px solid #4a76a8;
-    gap: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .routine-tab {
-    padding: 0.6rem 1.25rem;
+    padding: 0.45rem 1rem;
     text-decoration: none;
-    color: #4a76a8;
-    font-weight: bold;
-    border-radius: 5px 5px 0 0;
-    border: 2px solid transparent;
-    border-bottom: none;
-    margin-bottom: -2px;
+    color: var(--text-2);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 999px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .routine-tab.active {
-    background-color: #4a76a8;
-    color: white;
-    border-color: #4a76a8;
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
 }
 
-/* Start Workout CTA */
+.routine-tab-new {
+    color: var(--accent);
+    border-style: dashed;
+    border-color: var(--accent-border);
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* ════ Start workout CTA ════════════════════════════════════════ */
 .start-workout-cta {
     text-align: center;
     margin-bottom: 1.5rem;
@@ -365,15 +648,15 @@ footer {
 
 /* Weighted badge on exercise cards */
 .weighted-badge {
-    background-color: #e8f0f8;
-    color: #4a76a8;
+    background-color: var(--accent-soft);
+    color: var(--accent);
     font-size: 0.75rem;
     padding: 0.1rem 0.4rem;
-    border-radius: 3px;
-    font-weight: bold;
+    border-radius: 4px;
+    font-weight: 700;
 }
 
-/* Exercise info cards */
+/* ════ Exercise info cards ══════════════════════════════════════ */
 .exercise-info {
     display: flex;
     gap: 1rem;
@@ -381,8 +664,8 @@ footer {
 }
 
 .info-card {
-    background-color: #f0f4f8;
-    border-radius: 5px;
+    background-color: var(--accent-soft);
+    border-radius: var(--radius-sm);
     padding: 0.75rem 1rem;
     text-align: center;
     min-width: 70px;
@@ -390,7 +673,7 @@ footer {
 
 .info-card h3 {
     font-size: 0.75rem;
-    color: #666;
+    color: var(--text-2);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.25rem;
@@ -398,24 +681,24 @@ footer {
 
 .info-card p {
     font-size: 1.1rem;
-    font-weight: bold;
-    color: #4a76a8;
+    font-weight: 700;
+    color: var(--accent);
 }
 
 .exercise-description {
     margin: 1rem 0 1.5rem;
-    color: #555;
+    color: var(--text-2);
 }
 
 .exercise-description h3 {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: #888;
+    color: var(--text-3);
     margin-bottom: 0.4rem;
 }
 
-/* Last session summary */
+/* ════ Last session summary ═════════════════════════════════════ */
 .last-session-summary {
     display: flex;
     flex-wrap: wrap;
@@ -423,29 +706,29 @@ footer {
     gap: 0.5rem;
     margin-bottom: 1.25rem;
     padding: 0.75rem;
-    background-color: #f0f4f8;
-    border-radius: 5px;
+    background-color: var(--surface-3);
+    border-radius: var(--radius-sm);
 }
 
 .last-session-label {
     font-size: 0.8rem;
-    color: #888;
-    font-weight: bold;
+    color: var(--text-3);
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
 .last-set-badge {
     font-size: 0.85rem;
-    color: #4a76a8;
-    background-color: white;
-    border: 1px solid #c8d8e8;
-    border-radius: 4px;
+    color: var(--accent);
+    background-color: var(--surface);
+    border: 1px solid var(--accent-border);
+    border-radius: 6px;
     padding: 0.2rem 0.5rem;
     white-space: nowrap;
 }
 
-/* Unit toggle */
+/* ════ Unit toggle ══════════════════════════════════════════════ */
 .unit-toggle {
     display: flex;
     align-items: center;
@@ -455,43 +738,45 @@ footer {
 
 .unit-toggle-label {
     font-size: 0.85rem;
-    color: #666;
-    font-weight: bold;
+    color: var(--text-2);
+    font-weight: 600;
 }
 
 .unit-toggle-btn {
     background: none;
-    border: 2px solid #c8d8e8;
-    color: #666;
+    border: 2px solid var(--border-strong);
+    color: var(--text-2);
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
     cursor: pointer;
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: 700;
+    font-family: inherit;
     transition: all 0.15s;
 }
 
 .unit-toggle-btn.active {
-    background-color: #4a76a8;
-    border-color: #4a76a8;
-    color: white;
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
 }
 
-/* Gym set rows */
+/* ════ Gym set rows ═════════════════════════════════════════════ */
 .set-row {
     display: flex;
     align-items: flex-end;
     gap: 1rem;
     margin-bottom: 0.75rem;
     padding: 0.75rem;
-    background-color: #f9f9f9;
-    border-radius: 5px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
 }
 
 .set-label {
     min-width: 44px;
-    font-weight: bold;
-    color: #4a76a8;
+    font-weight: 700;
+    color: var(--accent);
     font-size: 0.9rem;
     padding-bottom: 0.35rem;
 }
@@ -509,7 +794,7 @@ footer {
 
 .set-inputs .form-group label {
     font-size: 0.75rem;
-    color: #888;
+    color: var(--text-3);
     font-weight: normal;
     margin-bottom: 0.3rem;
 }
@@ -519,25 +804,26 @@ footer {
     font-size: 1rem;
 }
 
-/* Timer section */
+/* ════ Timer section (exercise page) ════════════════════════════ */
 .timer-section {
     margin-top: 2rem;
     padding: 1rem;
-    background-color: #f9f9f9;
-    border-radius: 5px;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     text-align: center;
 }
 
 .timer-section h3 {
     margin-bottom: 0.75rem;
-    color: #4a76a8;
+    color: var(--accent);
 }
 
 .timer-display {
     font-size: 2.5rem;
-    font-weight: bold;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
-    color: #333;
+    color: var(--text);
     margin-bottom: 0.75rem;
 }
 
@@ -550,35 +836,38 @@ footer {
 
 .timer-btn {
     padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
-    background-color: white;
-    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+    background-color: var(--surface);
+    color: var(--text);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 0.9rem;
+    font-family: inherit;
 }
 
 .timer-btn.primary {
-    background-color: #4a76a8;
-    color: white;
-    border-color: #4a76a8;
+    background-color: var(--accent);
+    color: var(--on-accent);
+    border-color: var(--accent);
 }
 
-/* No-workout / login prompts */
+/* ════ No-workout / login prompts ═══════════════════════════════ */
 .no-workout-msg {
-    color: #666;
+    color: var(--text-2);
     margin-bottom: 1rem;
 }
 
 .login-prompt {
     margin-top: 1rem;
-    color: #666;
+    color: var(--text-2);
 }
 
-/* Workout detail — per-set breakdown */
+/* ════ Workout detail — per-set breakdown ═══════════════════════ */
 .sets-detail {
-    background-color: #f9f9f9;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
     padding: 0.75rem;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     margin: 0.75rem 0;
 }
 
@@ -588,7 +877,7 @@ footer {
     gap: 0.5rem;
     padding: 0.3rem 0;
     font-size: 0.95rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border);
 }
 
 .set-detail-row:last-child {
@@ -597,67 +886,69 @@ footer {
 
 .set-num {
     min-width: 50px;
-    font-weight: bold;
-    color: #4a76a8;
+    font-weight: 700;
+    color: var(--accent);
     font-size: 0.85rem;
 }
 
 .set-weight {
-    font-weight: bold;
-    color: #333;
+    font-weight: 700;
+    color: var(--text);
 }
 
 .set-x {
-    color: #aaa;
+    color: var(--text-3);
 }
 
 .set-reps {
-    color: #555;
+    color: var(--text-2);
 }
 
-/* Routine badges on workout detail */
+/* ════ Routine badges ═══════════════════════════════════════════ */
 .routine-badge {
     display: inline-block;
     font-size: 0.75rem;
-    font-weight: bold;
+    font-weight: 700;
     padding: 0.2rem 0.6rem;
-    border-radius: 3px;
+    border-radius: 999px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 1rem;
 }
 
 .routine-badge.gym {
-    background-color: #e8f5e9;
-    color: #388e3c;
+    background-color: var(--success-soft);
+    color: var(--success);
 }
 
 .routine-badge.bwf {
-    background-color: #e8f0f8;
-    color: #4a76a8;
+    background-color: var(--accent-soft);
+    color: var(--accent);
 }
 
-/* ── Accordion exercise cards ──────────────────────────────── */
+/* ════ Accordion exercise cards ═════════════════════════════════ */
 .exercise-item {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
 }
 
 .exercise-card-header {
     display: flex;
     align-items: center;
-    background-color: white;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     padding: 0.9rem 1rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     text-decoration: none;
-    color: #333;
+    color: var(--text);
+    transition: border-color 0.15s;
 }
 
 .exercise-card-header:active {
-    background-color: #f5f5f5;
+    background-color: var(--surface-2);
 }
 
 .exercise-card-main {
@@ -666,19 +957,20 @@ footer {
 
 .exercise-card-main h3 {
     font-size: 1.05rem;
+    font-weight: 600;
     margin-bottom: 0.25rem;
 }
 
 .exercise-progression-hint,
 .exercise-last-reps {
     font-size: 0.8rem;
-    color: #888;
+    color: var(--text-3);
     margin-top: 0.15rem;
 }
 
 .expand-icon {
     font-size: 1.4rem;
-    color: #aaa;
+    color: var(--text-3);
     transition: transform 0.2s;
     line-height: 1;
     margin-left: 0.5rem;
@@ -690,30 +982,36 @@ footer {
 
 .nav-arrow {
     font-size: 1.4rem;
-    color: #ccc;
+    color: var(--border-strong);
     margin-left: 0.5rem;
 }
 
 .logged-badge {
     display: inline-block;
     font-size: 0.75rem;
-    font-weight: bold;
-    color: #27ae60;
-    background-color: #eafaf1;
-    border: 1px solid #a9dfbf;
-    border-radius: 3px;
-    padding: 0.1rem 0.45rem;
+    font-weight: 700;
+    color: var(--success);
+    background-color: var(--success-soft);
+    border: 1px solid var(--success-border);
+    border-radius: 999px;
+    padding: 0.1rem 0.55rem;
     margin-left: 0.5rem;
     white-space: nowrap;
 }
 
 .exercise-panel {
-    background-color: #f9f9f9;
-    border: 1px solid #e8e8e8;
+    background-color: var(--surface-2);
+    border: 1px solid var(--border);
     border-top: none;
-    border-radius: 0 0 5px 5px;
+    border-radius: 0 0 var(--radius) var(--radius);
     padding: 1rem;
     margin-bottom: 0.25rem;
+}
+
+/* Square the card's bottom corners while its panel is open */
+.exercise-item:has(.exercise-panel:not([hidden])) .exercise-card-header {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .progression-info {
@@ -722,18 +1020,18 @@ footer {
     gap: 0.5rem;
     margin-bottom: 0.75rem;
     padding: 0.5rem 0.75rem;
-    background-color: #e8f0f8;
-    border-radius: 4px;
+    background-color: var(--accent-soft);
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
 }
 
 .progression-level {
-    color: #888;
+    color: var(--text-2);
     font-size: 0.8rem;
 }
 
 .form-error {
-    color: #c0392b;
+    color: var(--danger);
     font-size: 0.85rem;
     min-height: 1.1rem;
     margin-bottom: 0.5rem;
@@ -746,20 +1044,21 @@ footer {
     font-size: 1rem;
 }
 
-/* ── Workout launcher ───────────────────────────────────────── */
+/* ════ Workout launcher ═════════════════════════════════════════ */
 .workout-launcher {
-    background-color: white;
-    border-radius: 8px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 1.25rem 1rem;
     margin-bottom: 1.5rem;
     text-align: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow);
 }
 
 .launcher-title {
     font-size: 1.05rem;
-    font-weight: bold;
-    color: #333;
+    font-weight: 700;
+    color: var(--text);
     margin-bottom: 0.75rem;
 }
 
@@ -768,33 +1067,34 @@ footer {
     width: 100%;
     padding: 0.9rem;
     font-size: 1.1rem;
-    border-radius: 6px;
+    border-radius: 10px;
 }
 
 .launcher-hint {
     margin-top: 0.6rem;
     font-size: 0.78rem;
-    color: #999;
+    color: var(--text-3);
 }
 
-/* ── Routine edit mode ──────────────────────────────────────── */
+/* ════ Routine edit mode ════════════════════════════════════════ */
 .edit-routine-btn {
     margin-left: auto;
     background: none;
-    border: 1px solid #c8d8e8;
-    color: #4a76a8;
-    border-radius: 4px;
-    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
+    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
     font-size: 0.85rem;
-    font-weight: bold;
+    font-weight: 700;
+    font-family: inherit;
     cursor: pointer;
     align-self: center;
-    margin-bottom: 2px;
 }
 
 .edit-routine-btn.active {
-    background-color: #4a76a8;
-    color: white;
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
 }
 
 /* edit-only elements appear only while edit mode is on */
@@ -814,9 +1114,9 @@ footer {
 }
 
 .remove-exercise-btn {
-    background-color: #fdecea;
-    border: 1px solid #f5b7b1;
-    color: #c0392b;
+    background-color: var(--danger-soft);
+    border: 1px solid var(--danger-border);
+    color: var(--danger);
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -832,11 +1132,12 @@ footer {
 
 .restore-btn {
     background: none;
-    border: 1px dashed #c8d8e8;
-    color: #4a76a8;
-    border-radius: 4px;
+    border: 1px dashed var(--accent-border);
+    color: var(--accent);
+    border-radius: var(--radius-sm);
     padding: 0.4rem 0.9rem;
     font-size: 0.85rem;
+    font-family: inherit;
     cursor: pointer;
 }
 
@@ -847,19 +1148,20 @@ footer {
 .add-exercise-toggle {
     width: 100%;
     background: none;
-    border: 1px dashed #b8c8d8;
-    color: #4a76a8;
-    border-radius: 5px;
+    border: 1px dashed var(--accent-border);
+    color: var(--accent);
+    border-radius: var(--radius-sm);
     padding: 0.6rem;
     font-size: 0.9rem;
-    font-weight: bold;
+    font-weight: 700;
+    font-family: inherit;
     cursor: pointer;
 }
 
 .add-exercise-box {
-    background-color: white;
-    border: 1px solid #e0e6ec;
-    border-radius: 5px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 1rem;
     margin-top: 0.5rem;
 }
@@ -870,7 +1172,7 @@ footer {
     gap: 0.4rem;
     margin-bottom: 1rem;
     font-size: 0.9rem;
-    color: #666;
+    color: var(--text-2);
 }
 
 .add-ex-sets { width: 64px; }
@@ -878,16 +1180,18 @@ footer {
 
 .add-ex-row input {
     padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
     font-size: 1rem;
+    background-color: var(--surface);
+    color: var(--text);
 }
 
-/* ── Equipment icons & badges ───────────────────────────────── */
+/* ════ Equipment icons & badges ═════════════════════════════════ */
 .eq-icon {
     display: inline-flex;
     align-items: center;
-    color: #4a76a8;
+    color: var(--accent);
 }
 
 .eq-icon svg { display: block; }
@@ -898,15 +1202,15 @@ footer {
 }
 
 .custom-badge {
-    background-color: #fef5e7;
-    color: #b9770e;
+    background-color: var(--warning-soft);
+    color: var(--warning-text);
     font-size: 0.72rem;
     padding: 0.1rem 0.4rem;
-    border-radius: 3px;
-    font-weight: bold;
+    border-radius: 4px;
+    font-weight: 700;
 }
 
-/* ── Set add/remove controls ────────────────────────────────── */
+/* ════ Set add/remove controls ══════════════════════════════════ */
 .set-controls {
     display: flex;
     justify-content: flex-end;
@@ -915,25 +1219,26 @@ footer {
 }
 
 .set-ctrl-btn {
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    color: #555;
-    border-radius: 4px;
+    background-color: var(--surface);
+    border: 1px solid var(--border-strong);
+    color: var(--text-2);
+    border-radius: var(--radius-sm);
     padding: 0.3rem 0.8rem;
     font-size: 0.85rem;
-    font-weight: bold;
+    font-weight: 700;
+    font-family: inherit;
     cursor: pointer;
 }
 
 .set-ctrl-btn:active {
-    background-color: #e8e8e8;
+    background-color: var(--surface-3);
 }
 
-/* ── Weight picker ──────────────────────────────────────────── */
+/* ════ Weight picker ════════════════════════════════════════════ */
 .weight-picker {
-    background-color: white;
-    border: 1px solid #e0e6ec;
-    border-radius: 6px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
     padding: 0.75rem;
     margin-bottom: 1rem;
 }
@@ -947,36 +1252,36 @@ footer {
 
 .picker-title {
     font-size: 0.8rem;
-    font-weight: bold;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #888;
+    color: var(--text-3);
     flex: 1;
 }
 
 .picker-total {
     font-size: 1.15rem;
-    font-weight: bold;
-    color: #4a76a8;
+    font-weight: 700;
+    color: var(--accent);
     font-variant-numeric: tabular-nums;
 }
 
 .picker-settings-btn {
     background: none;
     border: none;
-    color: #aaa;
+    color: var(--text-3);
     font-size: 1rem;
     cursor: pointer;
     padding: 0.1rem 0.3rem;
     border-radius: 3px;
     line-height: 1;
 }
-.picker-settings-btn:hover { color: #555; }
+.picker-settings-btn:hover { color: var(--text-2); }
 
 /* Settings panel */
 .picker-settings-panel {
-    background-color: #f4f7fa;
-    border-radius: 5px;
+    background-color: var(--surface-3);
+    border-radius: var(--radius-sm);
     padding: 0.6rem;
     margin-bottom: 0.75rem;
 }
@@ -992,24 +1297,25 @@ footer {
 
 .settings-label {
     font-size: 0.78rem;
-    font-weight: bold;
-    color: #888;
+    font-weight: 700;
+    color: var(--text-3);
     min-width: 60px;
 }
 
 .settings-opt-btn {
-    background-color: white;
-    border: 1px solid #cdd5de;
-    color: #555;
+    background-color: var(--surface);
+    border: 1px solid var(--border-strong);
+    color: var(--text-2);
     border-radius: 20px;
     padding: 0.2rem 0.65rem;
     font-size: 0.8rem;
+    font-family: inherit;
     cursor: pointer;
 }
 .settings-opt-btn.active {
-    background-color: #4a76a8;
-    border-color: #4a76a8;
-    color: white;
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
 }
 
 /* Action buttons row */
@@ -1023,45 +1329,46 @@ footer {
 
 .action-label {
     font-size: 0.75rem;
-    color: #999;
-    font-weight: bold;
+    color: var(--text-3);
+    font-weight: 700;
 }
 
 .action-sep {
     width: 1px;
     height: 16px;
-    background-color: #ddd;
+    background-color: var(--border-strong);
     margin: 0 0.1rem;
 }
 
 .action-btn {
-    border-radius: 4px;
+    border-radius: 6px;
     padding: 0.28rem 0.6rem;
     font-size: 0.82rem;
-    font-weight: bold;
+    font-weight: 700;
+    font-family: inherit;
     cursor: pointer;
     border: 1px solid transparent;
     white-space: nowrap;
 }
 .action-btn.ghost {
-    background-color: #f5f5f5;
-    border-color: #ddd;
-    color: #666;
+    background-color: var(--surface-3);
+    border-color: var(--border-strong);
+    color: var(--text-2);
 }
 .action-btn.blue {
-    background-color: #e8f0f8;
-    border-color: #c8d8e8;
-    color: #4a76a8;
+    background-color: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent);
 }
 .action-btn.blue.applied {
-    background-color: #27ae60;
-    border-color: #27ae60;
+    background-color: var(--success);
+    border-color: var(--success);
     color: white;
 }
 .action-btn.muted {
     background-color: transparent;
     border-color: transparent;
-    color: #bbb;
+    color: var(--text-3);
     margin-left: auto;
     font-size: 1rem;
 }
@@ -1078,20 +1385,21 @@ footer {
 }
 
 .db-step-btn {
-    background-color: #f5f8fc;
-    border: 1px solid #d0dce8;
-    color: #4a76a8;
+    background-color: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
     border-radius: 20px;
     padding: 0.25rem 0.7rem;
     font-size: 0.85rem;
-    font-weight: bold;
+    font-weight: 700;
+    font-family: inherit;
     cursor: pointer;
     white-space: nowrap;
 }
 .db-step-btn.selected {
-    background-color: #4a76a8;
-    border-color: #4a76a8;
-    color: white;
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
 }
 .db-step-btn:active { transform: scale(0.94); }
 
@@ -1101,21 +1409,21 @@ footer {
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    background-color: #f4f7fa;
-    border-radius: 5px;
+    background-color: var(--surface-3);
+    border-radius: var(--radius-sm);
     padding: 0.6rem 0.5rem 1.6rem;
     margin-bottom: 0.6rem;
 }
 
 .db-arrow {
-    background-color: white;
-    border: 2px solid #c8d8e8;
-    color: #4a76a8;
+    background-color: var(--surface);
+    border: 2px solid var(--accent-border);
+    color: var(--accent);
     border-radius: 50%;
     width: 42px;
     height: 42px;
     font-size: 1.3rem;
-    font-weight: bold;
+    font-weight: 700;
     line-height: 1;
     cursor: pointer;
     flex-shrink: 0;
@@ -1158,8 +1466,8 @@ footer {
     right: 0;
     text-align: center;
     font-size: 0.95rem;
-    font-weight: bold;
-    color: #4a76a8;
+    font-weight: 700;
+    color: var(--accent);
     font-variant-numeric: tabular-nums;
 }
 
@@ -1167,8 +1475,8 @@ footer {
 .machine-visual {
     display: flex;
     justify-content: center;
-    background-color: #f4f7fa;
-    border-radius: 5px;
+    background-color: var(--surface-3);
+    border-radius: var(--radius-sm);
     padding: 0.6rem;
     margin-bottom: 0.5rem;
 }
@@ -1183,7 +1491,7 @@ footer {
 .stack-plate {
     position: relative;
     height: 15px;
-    background-color: #d5dde5;
+    background-color: var(--border-strong);
     border: none;
     border-radius: 2px;
     cursor: pointer;
@@ -1195,18 +1503,18 @@ footer {
 
 .stack-plate-num {
     font-size: 0.62rem;
-    font-weight: bold;
-    color: #8a98a8;
+    font-weight: 700;
+    color: var(--text-2);
     line-height: 1;
     pointer-events: none;
 }
 
 .stack-plate.selected {
-    background-color: #4a76a8;
+    background-color: var(--accent);
 }
 
 .stack-plate.selected .stack-plate-num {
-    color: white;
+    color: var(--on-accent);
 }
 
 .stack-plate.pinned::after {
@@ -1224,13 +1532,13 @@ footer {
 
 /* Brief highlight when the picker fills inputs */
 .weight-input.just-filled {
-    background-color: #eafaf1;
+    background-color: var(--success-soft);
     transition: background-color 0.4s;
 }
 
 .picker-hint {
     font-size: 0.78rem;
-    color: #aaa;
+    color: var(--text-3);
     margin: 0;
     text-align: center;
 }
@@ -1241,8 +1549,8 @@ footer {
     align-items: center;
     justify-content: center;
     min-height: 90px;
-    background-color: #f4f7fa;
-    border-radius: 5px;
+    background-color: var(--surface-3);
+    border-radius: var(--radius-sm);
     padding: 0.5rem 0.25rem;
     margin-bottom: 0.6rem;
     overflow-x: auto;
@@ -1283,7 +1591,7 @@ footer {
     right: 0;
     text-align: center;
     font-size: 0.72rem;
-    color: #a5b1bd;
+    color: var(--text-3);
     pointer-events: none;
 }
 
@@ -1295,14 +1603,14 @@ footer {
 }
 
 .plate-add-btn {
-    background-color: white;
-    border: 2px solid #7f8c8d;
+    background-color: var(--surface);
+    border: 2px solid var(--border-strong);
     border-radius: 50%;
     width: 46px;
     height: 46px;
     font-size: 0.85rem;
-    font-weight: bold;
-    color: #333;
+    font-weight: 700;
+    color: var(--text);
     cursor: pointer;
     flex-shrink: 0;
 }
@@ -1311,21 +1619,21 @@ footer {
     transform: scale(0.92);
 }
 
-
-/* ── Bottom timer bar ───────────────────────────────────────── */
+/* ════ Bottom timer bar ═════════════════════════════════════════ */
 .timer-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #2c3e50;
+    background-color: var(--timer-bg);
     color: white;
     padding: 0.7rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     z-index: 200;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.25);
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,255,255,0.07);
 }
 
 .timer-bar-left {
@@ -1337,7 +1645,7 @@ footer {
 
 .timer-exercise {
     font-size: 0.75rem;
-    color: #aab7c4;
+    color: rgba(255,255,255,0.55);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1346,7 +1654,7 @@ footer {
 
 .timer-bar-display {
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
 }
@@ -1361,55 +1669,149 @@ footer {
     border: 1px solid rgba(255,255,255,0.2);
     color: white;
     padding: 0.4rem 0.7rem;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 0.85rem;
+    font-family: inherit;
     white-space: nowrap;
 }
 
 .timer-ctrl-btn.primary {
-    background-color: #4a76a8;
-    border-color: #4a76a8;
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    border-color: transparent;
+    color: var(--on-accent);
     padding: 0.4rem 1rem;
     font-size: 1rem;
 }
 
 body.timer-visible main {
-    padding-bottom: 80px;
+    padding-bottom: 88px;
 }
 
-/* ── Advancement banner ─────────────────────────────────────── */
+/* ════ Advancement banner ═══════════════════════════════════════ */
 .advancement-banner {
-    background-color: #27ae60;
+    background-color: var(--success);
     color: white;
     padding: 0.75rem 1rem;
-    border-radius: 5px;
+    border-radius: var(--radius);
     margin-bottom: 1rem;
     text-align: center;
-    font-weight: bold;
+    font-weight: 700;
+    box-shadow: var(--shadow);
 }
 
-/* ── log-hint on exercise detail ────────────────────────────── */
+/* ════ Log-hint on exercise detail ══════════════════════════════ */
 .log-hint {
     margin-top: 1.5rem;
     padding: 0.75rem;
-    background-color: #f0f4f8;
-    border-radius: 5px;
+    background-color: var(--surface-3);
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
-    color: #555;
+    color: var(--text-2);
 }
 
 .log-hint a {
-    color: #4a76a8;
+    color: var(--accent);
 }
 
 .progression-next {
     margin-top: 0.5rem;
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-2);
 }
 
-/* ── Mobile responsive ─────────────────────────────────────── */
+/* ════ AI program generation ════════════════════════════════════ */
+.routine-tab-new {
+    font-weight: 700;
+}
+
+.ai-program-header {
+    margin-bottom: 1rem;
+}
+
+.ai-program-description {
+    color: var(--text-2);
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+.generate-container {
+    max-width: 540px;
+}
+
+.generate-intro {
+    color: var(--text-2);
+    margin-bottom: 1.25rem;
+}
+
+.equipment-checks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 0.75rem;
+}
+
+.equipment-check {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.equipment-check input[type="checkbox"] {
+    width: auto;
+    accent-color: var(--accent);
+}
+
+.generate-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.generate-row .form-group {
+    flex: 1;
+}
+
+.preview-card {
+    cursor: default;
+}
+
+.preview-description {
+    color: var(--text-2);
+    font-size: 0.9rem;
+    margin-top: 0.35rem;
+}
+
+.preview-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin: 1.5rem 0;
+}
+
+.preview-actions .restore-btn.full-width {
+    width: 100%;
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.settings-section h3 {
+    margin-bottom: 0.5rem;
+}
+
+.settings-hint {
+    color: var(--text-2);
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1rem;
+}
+
+.settings-key-status {
+    margin-bottom: 0.5rem;
+}
+
+/* ════ Mobile responsive ════════════════════════════════════════ */
 @media (max-width: 600px) {
 
     /* Bigger tap targets for inputs */
@@ -1461,15 +1863,19 @@ body.timer-visible main {
     }
 
     /* Nav: tighten up */
-    nav a {
-        padding: 0.4rem 0.35rem;
-        font-size: 0.9rem;
+    .site-nav a {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.88rem;
+    }
+
+    .tagline {
+        display: none;
     }
 
     /* Routine tabs */
     .routine-tab {
-        padding: 0.5rem 0.9rem;
-        font-size: 0.9rem;
+        padding: 0.4rem 0.85rem;
+        font-size: 0.88rem;
     }
 
     /* Progression cards: single column */
@@ -1492,93 +1898,4 @@ body.timer-visible main {
         width: auto;
         padding: 0.75rem 2rem;
     }
-}
-/* ── AI program generation ───────────────────────────────────────── */
-.routine-tabs {
-    flex-wrap: wrap;
-}
-
-.routine-tab-new {
-    color: #7a5ca8;
-}
-
-.ai-program-header {
-    margin-bottom: 1rem;
-}
-
-.ai-program-description {
-    color: #555;
-    font-style: italic;
-    margin-bottom: 0.5rem;
-}
-
-.generate-container {
-    max-width: 540px;
-}
-
-.generate-intro {
-    color: #555;
-    margin-bottom: 1.25rem;
-}
-
-.equipment-checks {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.4rem 0.75rem;
-}
-
-.equipment-check {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-weight: normal;
-    cursor: pointer;
-}
-
-.generate-row {
-    display: flex;
-    gap: 1rem;
-}
-
-.generate-row .form-group {
-    flex: 1;
-}
-
-.preview-card {
-    cursor: default;
-}
-
-.preview-description {
-    color: #555;
-    font-size: 0.9rem;
-    margin-top: 0.35rem;
-}
-
-.preview-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    margin: 1.5rem 0;
-}
-
-.preview-actions .restore-btn.full-width {
-    width: 100%;
-}
-
-.settings-section {
-    margin-bottom: 2rem;
-}
-
-.settings-section h3 {
-    margin-bottom: 0.5rem;
-}
-
-.settings-hint {
-    color: #555;
-    font-size: 0.9rem;
-    margin: 0.5rem 0 1rem;
-}
-
-.settings-key-status {
-    margin-bottom: 0.5rem;
 }

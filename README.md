@@ -20,6 +20,7 @@
 - **Rest timer** — built-in 60/90/120s countdown with vibration on completion
 - **Progress page** — current progression levels and recent workout history with per-set details
 - **Mobile-first UI** — responsive layout designed to be used at the gym from a phone
+- **Dark mode** — light/dark theme toggle in the header; defaults to your system preference and remembers your choice
 
 ## Tech stack
 

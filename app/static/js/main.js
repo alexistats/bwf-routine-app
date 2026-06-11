@@ -26,6 +26,17 @@ document.addEventListener('DOMContentLoaded', function () {
         machine: '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><rect x="6" y="5" width="12" height="3.2" rx="1"/><rect x="6" y="9.4" width="12" height="3.2" rx="1"/><rect x="6" y="13.8" width="12" height="3.2" rx="1"/><rect x="6" y="18.2" width="12" height="3.2" rx="1"/><rect x="11" y="1" width="2" height="5" rx="1"/></svg>',
     };
 
+    // ── Theme toggle ───────────────────────────────────────────────
+    // The current theme is applied to <html> before first paint (see base.html)
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function () {
+            const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+        });
+    }
+
     // ── Unit state ─────────────────────────────────────────────────
     let currentUnit = localStorage.getItem('weightUnit') || 'lbs';
 
