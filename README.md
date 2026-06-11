@@ -1,12 +1,14 @@
 # BWF Routine App
 
-A mobile-friendly workout tracker built with Flask. Supports two routines:
+A mobile-friendly workout tracker built with Flask. Supports two built-in routines plus AI-generated ones:
 
 - **BWF Routine** — the [Bodyweight Fitness Recommended Routine](https://www.reddit.com/r/bodyweightfitness/wiki/kb/recommended_routine/), with automatic progression tracking (e.g., scapular pulls → arch hangs → negative pull-ups → pull-ups)
 - **Gym Routine** — a machine/free-weight routine with per-set weight and rep logging
+- **AI Programs** — describe your goal (climbing, a 5k, ringette…), equipment, and availability, and Claude generates a personalized program with all the same logging features
 
 ## Features
 
+- **AI program generator** — preview the generated program, regenerate with feedback ("less volume", "no overhead pressing"), then save it as a routine alongside BWF/Gym; uses a shared server key or your own Claude API key (stored encrypted)
 - **Quickstart** — the app opens to your last-used routine with a one-tap "Start Workout" button
 - **Workout sessions** — start a workout, log exercises as you go, end when done (empty workouts are discarded)
 - **Routine editing (Gym)** — add your own exercises (name, sets, reps, equipment) or remove built-in ones, right from the home page; removals are restorable
@@ -47,6 +49,7 @@ The app starts on `http://localhost:5000` with a local SQLite database (`bwf_rou
 |---|---|---|
 | `DATABASE_URL` | SQLAlchemy database URL (`postgres://` URLs are normalized automatically) | `sqlite:///bwf_routine.db` |
 | `SECRET_KEY` | Flask session/CSRF signing key — **required in production** | insecure dev key (warns) |
+| `ANTHROPIC_API_KEY` | Shared Claude API key for the AI program generator — optional; users can also save their own key in Settings (stored encrypted, takes precedence) | unset (feature prompts for a user key) |
 
 ## Running tests
 

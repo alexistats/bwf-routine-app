@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% from "_macros.html" import equipment_icon %}
+{% block title %}Preview: {{ program.name }}{% endblock %}
+{% block content %}
+<div class="routine-container">
+    <h2>✨ {{ program.name }}</h2>
+    {% if program.description %}
+    <p class="ai-program-description">{{ program.description }}</p>
+    {% endif %}
+
+    {% for section, exercises in routine.items() %}
+    <section class="routine-section">
+        <h2>{{ section }}</h2>
+        <ul class="exercise-list">
+            {% for exercise in exercises %}
+            <li class="exercise-item">
+                <div class="exercise-card-header preview-card">
+                    <div class="exercise-card-main">
+                        <h3>{{ exercise.name }}</h3>
+                        <div class="exercise-meta">
+                            {% if exercise.equipment != 'bodyweight' %}
+                            <span class="eq-icon" title="{{ exercise.equipment }}">{{ equipment_icon(exercise.equipment) }}</span>
+                            {% endif %}
+                            <span>{{ exercise.sets }}×{{ exercise.reps }}</span>
+                        </div>
+                        {% if exercise.description %}
+                        <p class="preview-description">{{ exercise.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endfor %}
+
+    <div class="preview-actions">
+        <form method="POST" action="{{ url_for('main.accept_program', program_id=program.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn primary full-width">✔ Looks good — save this program</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('main.retry_program', program_id=program.id) }}" id="retry-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="feedback">Not quite right? Tell the coach what to change:</label>
+                <textarea id="feedback" name="feedback" rows="2" maxlength="500"
+                          placeholder="e.g. less volume, no overhead pressing, add more core work"></textarea>
+            </div>
+            <button type="submit" class="btn full-width" id="retry-btn">↻ Regenerate with feedback</button>
+            <p class="launcher-hint" id="retry-wait-hint" hidden>
+                Revising the program — this usually takes 30–60 seconds…</p>
+        </form>
+
+        <form method="POST" action="{{ url_for('main.delete_program', program_id=program.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="restore-btn full-width">✕ Discard draft</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('retry-form').addEventListener('submit', function () {
+    var btn = document.getElementById('retry-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Regenerating…';
+    document.getElementById('retry-wait-hint').hidden = false;
+});
+</script>
+{% endblock %}

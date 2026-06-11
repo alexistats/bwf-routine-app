@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="auth-container">
+    <h2>Settings</h2>
+
+    <section class="settings-section">
+        <h3>Claude API key</h3>
+        <p class="settings-hint">
+            Used by the <a href="{{ url_for('main.generate') }}">AI program generator</a>.
+            {% if server_key_available %}
+            This app has a shared key, so a personal key is optional — yours is used instead when set.
+            {% else %}
+            This app has no shared key, so you need your own to generate programs.
+            Get one at <a href="https://console.anthropic.com/" target="_blank" rel="noopener">console.anthropic.com</a>.
+            {% endif %}
+        </p>
+
+        {% if key_hint %}
+        <p class="settings-key-status">Your key is saved (ends in <code>…{{ key_hint }}</code>).</p>
+        <form method="POST" action="{{ url_for('main.settings') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="action" value="clear">
+            <button type="submit" class="restore-btn">Remove my key</button>
+        </form>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('main.settings') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label for="api_key">{% if key_hint %}Replace key{% else %}API key{% endif %}</label>
+                <input type="password" id="api_key" name="api_key"
+                       placeholder="sk-ant-…" autocomplete="off">
+            </div>
+            <button type="submit" class="btn primary">Save key</button>
+        </form>
+        <p class="settings-hint">Your key is stored encrypted and never shown again in full.</p>
+    </section>
+</div>
+{% endblock %}

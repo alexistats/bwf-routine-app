@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% from "_macros.html" import equipment_icon %}
-{% block title %}{% if routine_type == 'gym' %}Gym Routine{% else %}BWF Routine{% endif %}{% endblock %}
+{% block title %}{% if ai_program %}{{ ai_program.name }}{% elif routine_type == 'gym' %}Gym Routine{% else %}BWF Routine{% endif %}{% endblock %}
 {% block content %}
+{# AI programs use the gym exercise schema, so they share the gym UI paths #}
+{% set gym_style = routine_type != 'bwf' %}
 <div class="routine-container">
 
     <div class="routine-tabs">
@@ -9,10 +11,29 @@
            class="routine-tab {% if routine_type == 'bwf' %}active{% endif %}">BWF</a>
         <a href="{{ url_for('main.home', routine='gym') }}"
            class="routine-tab {% if routine_type == 'gym' %}active{% endif %}">Gym</a>
-        {% if current_user.is_authenticated and routine_type == 'gym' %}
+        {% for program in ai_programs %}
+        <a href="{{ url_for('main.home', routine=program.routine_key) }}"
+           class="routine-tab {% if routine_type == program.routine_key %}active{% endif %}">✨ {{ program.name }}</a>
+        {% endfor %}
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('main.generate') }}" class="routine-tab routine-tab-new" title="Generate a program with AI">＋ AI</a>
+        {% endif %}
+        {% if current_user.is_authenticated and gym_style %}
         <button type="button" id="edit-routine-toggle" class="edit-routine-btn" title="Add or remove exercises">✎ Edit</button>
         {% endif %}
     </div>
+
+    {% if ai_program %}
+    <div class="ai-program-header">
+        {% if ai_program.description %}<p class="ai-program-description">{{ ai_program.description }}</p>{% endif %}
+        <form method="POST" action="{{ url_for('main.delete_program', program_id=ai_program.id) }}"
+              onsubmit="return confirm('Delete this program? Your workout history is kept.');"
+              class="ai-program-delete edit-only">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="restore-btn">🗑 Delete this program</button>
+        </form>
+    </div>
+    {% endif %}
 
     {% if current_user.is_authenticated %}
         {% if session.get('current_workout_id') %}
@@ -23,15 +44,16 @@
         <div class="workout-launcher">
             <p class="launcher-title">Ready to train?</p>
             <a href="{{ url_for('main.start_workout', routine_type=routine_type) }}" class="btn primary launcher-btn">
-                ⚡ Start {% if routine_type == 'gym' %}Gym{% else %}BWF{% endif %} Workout
+                ⚡ Start {% if ai_program %}{{ ai_program.name }}{% elif routine_type == 'gym' %}Gym{% else %}BWF{% endif %} Workout
             </a>
-            <p class="launcher-hint">Showing your last-used routine — switch tabs to train the other.</p>
+            <p class="launcher-hint">Showing your last-used routine — switch tabs to train another.</p>
         </div>
         {% endif %}
 
-        {% if routine_type == 'gym' and hidden_count %}
+        {% if gym_style and hidden_count %}
         <form method="POST" action="{{ url_for('main.restore_exercises') }}" class="restore-form edit-only">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="routine" value="{{ routine_type }}">
             <button type="submit" class="restore-btn">↩ Restore {{ hidden_count }} removed exercise{{ 's' if hidden_count > 1 }}</button>
         </form>
         {% endif %}
@@ -58,7 +80,7 @@
                     <div class="exercise-card-main">
                         <h3>{{ exercise.name }}</h3>
                         <div class="exercise-meta">
-                            {% if routine_type == 'gym' and exercise.get('equipment') and exercise.equipment != 'bodyweight' %}
+                            {% if gym_style and exercise.get('equipment') and exercise.equipment != 'bodyweight' %}
                             <span class="eq-icon" title="{{ exercise.equipment }}">{{ equipment_icon(exercise.equipment) }}</span>
                             {% endif %}
                             <span>{{ exercise.sets }}×{{ exercise.reps }}</span>
@@ -81,10 +103,11 @@
                         {% endif %}
                     </div>
 
-                    {% if current_user.is_authenticated and routine_type == 'gym' %}
+                    {% if current_user.is_authenticated and gym_style %}
                     <form method="POST" action="{{ url_for('main.remove_exercise') }}" class="remove-exercise-form edit-only">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="name" value="{{ exercise.name }}">
+                        <input type="hidden" name="routine" value="{{ routine_type }}">
                         <button type="submit" class="remove-exercise-btn" title="Remove {{ exercise.name }}">×</button>
                     </form>
                     {% endif %}
@@ -95,8 +118,8 @@
                 {% if can_log %}
                 <div class="exercise-panel" id="panel-{{ card_id }}" hidden>
 
-                    {% if routine_type == 'gym' %}
-                    {# ── Gym inline form ── #}
+                    {% if gym_style %}
+                    {# ── Gym-style inline form (gym + AI programs) ── #}
                     {% set last_weights = last_log.weight_per_set.split(',') if last_log and last_log.weight_per_set else [] %}
                     {% set last_reps_list = last_log.reps_per_set.split(',') if last_log and last_log.reps_per_set else [] %}
                     {% set last_unit = last_log.weight_unit if last_log and last_log.weight_unit else 'lbs' %}
@@ -237,13 +260,14 @@
             {% endfor %}
         </ul>
 
-        {% if current_user.is_authenticated and routine_type == 'gym' %}
+        {% if current_user.is_authenticated and gym_style %}
         <div class="add-exercise-wrap edit-only">
             <button type="button" class="add-exercise-toggle">+ Add exercise to {{ section }}</button>
             <div class="add-exercise-box" hidden>
                 <form method="POST" action="{{ url_for('main.add_exercise') }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="section" value="{{ section }}">
+                    <input type="hidden" name="routine" value="{{ routine_type }}">
                     <div class="form-group">
                         <input type="text" name="name" placeholder="Exercise name" required maxlength="100">
                     </div>
