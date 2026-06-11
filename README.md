@@ -43,6 +43,8 @@ python run.py
 
 The app starts on `http://localhost:5000` with a local SQLite database (`nofluff.db`), created automatically on first run.
 
+The Python version is pinned in `.python-version` (3.13) — pyenv/uv pick it up locally, and Render uses it to select the runtime. Newer Pythons (3.14+) don't have prebuilt wheels for all pinned dependencies yet.
+
 ### Configuration
 
 | Environment variable | Purpose | Default |
@@ -68,6 +70,7 @@ The app is set up for a free-tier deployment:
 2. **Render** — create a Web Service at [render.com](https://render.com) pointed at this repo (`main` branch):
    - Build command: `pip install -r requirements.txt`
    - Start command: auto-detected from the `Procfile`
+   - Python version: auto-detected from `.python-version` (don't set `PYTHON_VERSION` manually)
    - Environment variables: `DATABASE_URL` (Neon connection string) and `SECRET_KEY` (e.g., `python -c "import secrets; print(secrets.token_hex(32))"`)
 
 Tables are created automatically on first startup. Note that both free tiers sleep when idle — the first request after a quiet period takes ~30–60s.
