@@ -19,3 +19,11 @@ class Config:
     SQLALCHEMY_DATABASE_URI = _db_uri
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Neon (and Render's proxy) drop idle/stale connections, which surfaces as
+    # 'SSL error: decryption failed or bad record mac'. Verify connections
+    # before use and recycle them before the platform kills them.
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+    }

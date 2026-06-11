@@ -78,6 +78,10 @@ exercise selection toward the stated goal (e.g. grip/pull work for climbing, \
 posterior chain and intervals support for running)."""
 
 GENERATION_ERROR_HINTS = {
+    # APITimeoutError subclasses APIConnectionError — keep it first
+    anthropic.APITimeoutError:
+        'The coach took too long to respond. Try again — it usually works '
+        'on the second attempt.',
     anthropic.AuthenticationError:
         'The Claude API key was rejected. Check it in Settings.',
     anthropic.PermissionDeniedError:
@@ -131,7 +135,9 @@ def generate_program(api_key, inputs, previous_program=None, feedback=None):
                          f"Revise the program with this feedback: {feedback}\n"
                          "Keep everything that wasn't criticized."})
 
-    client = anthropic.Anthropic(api_key=api_key)
+    # Fail with a friendly message well before gunicorn's worker timeout
+    # (--timeout 300) would kill the request mid-flight.
+    client = anthropic.Anthropic(api_key=api_key, timeout=120.0, max_retries=1)
     last_error = None
     for _ in range(2):  # one automatic retry on invalid output
         try:
@@ -141,8 +147,13 @@ def generate_program(api_key, inputs, previous_program=None, feedback=None):
                 thinking={"type": "adaptive"},
                 system=SYSTEM_PROMPT,
                 messages=messages,
-                output_config={"format": {"type": "json_schema",
-                                          "schema": PROGRAM_SCHEMA}},
+                output_config={
+                    # medium effort keeps generation fast enough for a
+                    # synchronous web request without hurting program quality
+                    "effort": "medium",
+                    "format": {"type": "json_schema",
+                               "schema": PROGRAM_SCHEMA},
+                },
             )
         except anthropic.APIError as exc:
             for exc_type, hint in GENERATION_ERROR_HINTS.items():
