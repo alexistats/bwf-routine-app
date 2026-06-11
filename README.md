@@ -1,6 +1,6 @@
-# BWF Routine App
+# NoFluff
 
-A mobile-friendly workout tracker built with Flask. Supports two built-in routines plus AI-generated ones:
+**The no fluff workout app.** A mobile-friendly workout tracker built with Flask — no ads, no upsells, no social feed. Supports two built-in routines plus AI-generated ones:
 
 - **BWF Routine** — the [Bodyweight Fitness Recommended Routine](https://www.reddit.com/r/bodyweightfitness/wiki/kb/recommended_routine/), with automatic progression tracking (e.g., scapular pulls → arch hangs → negative pull-ups → pull-ups)
 - **Gym Routine** — a machine/free-weight routine with per-set weight and rep logging
@@ -29,8 +29,8 @@ Flask 3 · Flask-SQLAlchemy · Flask-Login · Flask-WTF (CSRF) · Jinja2 · vani
 
 ```bash
 # 1. Clone and enter the repo
-git clone https://github.com/alexistats/bwf-routine-app.git
-cd bwf-routine-app
+git clone https://github.com/alexistats/nofluff.git
+cd nofluff
 
 # 2. Create a virtualenv and install dependencies
 python -m venv venv
@@ -41,13 +41,13 @@ pip install -r requirements.txt
 python run.py
 ```
 
-The app starts on `http://localhost:5000` with a local SQLite database (`bwf_routine.db`), created automatically on first run.
+The app starts on `http://localhost:5000` with a local SQLite database (`nofluff.db`), created automatically on first run.
 
 ### Configuration
 
 | Environment variable | Purpose | Default |
 |---|---|---|
-| `DATABASE_URL` | SQLAlchemy database URL (`postgres://` URLs are normalized automatically) | `sqlite:///bwf_routine.db` |
+| `DATABASE_URL` | SQLAlchemy database URL (`postgres://` URLs are normalized automatically) | `sqlite:///nofluff.db` |
 | `SECRET_KEY` | Flask session/CSRF signing key — **required in production** | insecure dev key (warns) |
 | `ANTHROPIC_API_KEY` | Shared Claude API key for the AI program generator — optional; users can also save their own key in Settings (stored encrypted, takes precedence) | unset (feature prompts for a user key) |
 
