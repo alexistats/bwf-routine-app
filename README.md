@@ -29,8 +29,8 @@ Flask 3 · Flask-SQLAlchemy · Flask-Login · Flask-WTF (CSRF) · Jinja2 · vani
 
 ```bash
 # 1. Clone and enter the repo
-git clone https://github.com/alexistats/nofluff.git
-cd nofluff
+git clone https://github.com/alexistats/no_fluff.git
+cd no_fluff
 
 # 2. Create a virtualenv and install dependencies
 python -m venv venv
