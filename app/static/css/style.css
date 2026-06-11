@@ -30,6 +30,13 @@ header {
 
 header h1 {
     font-size: 1.5rem;
+    margin-bottom: 0.1rem;
+}
+
+header .tagline {
+    font-size: 0.8rem;
+    color: #d7e3f2;
+    font-style: italic;
     margin-bottom: 0.5rem;
 }
 

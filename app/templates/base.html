@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{% block title %}BWF Routine App{% endblock %}</title>
+    <title>{% block title %}NoFluff{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>BWF Recommended Routine</h1>
+            <h1>NoFluff</h1>
+            <p class="tagline">The no fluff workout app</p>
             <nav>
                 <a href="{{ url_for('main.home') }}">Home</a>
                 {% if current_user.is_authenticated %}
@@ -45,7 +46,7 @@
         </main>
 
         <footer>
-            <p>&copy; 2025 BWF Routine App</p>
+            <p>&copy; 2025 NoFluff</p>
         </footer>
     </div>
 

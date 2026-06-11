@@ -12,7 +12,7 @@ class Config:
     # also store their own key in Settings, which takes precedence.
     ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 
-    _db_uri = os.environ.get('DATABASE_URL') or 'sqlite:///bwf_routine.db'
+    _db_uri = os.environ.get('DATABASE_URL') or 'sqlite:///nofluff.db'
     # SQLAlchemy 2.x requires 'postgresql://' — Render/Neon provide 'postgres://'
     if _db_uri.startswith('postgres://'):
         _db_uri = _db_uri.replace('postgres://', 'postgresql://', 1)
